@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Web to Lead Form</title>
+  <link rel="stylesheet"
+        href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <style>
+    form {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      margin-bottom: 12px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    input[type="submit"] {
+      background-color: #0073e6;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    input[type="submit"]:hover {
+      background-color: #005bb5;
+    }
+  </style>
+</head>
+<body>
+
+<form action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DVD000006P1YX" method="POST">
+  <input type="hidden" name="oid" value="00DVD000006P1YX">
+  <input type="hidden" name="retURL" value="https://myquestconcierge.com">
+
+  <!-- Debug -->
+  <!--<input type="hidden" name="debug" value="1">-->
+  <!--<input type="hidden" name="debugEmail" value="marcoivan.mejia@nuvolarworks.com">-->
+
+  <label for="first_name">First Name</label>
+  <input id="first_name" maxlength="40" name="first_name" type="text" required>
+
+  <label for="last_name">Last Name</label>
+  <input id="last_name" maxlength="80" name="last_name" type="text" required>
+
+  <label for="email">Email</label>
+  <input id="email" maxlength="80" name="email" type="email" required>
+
+  <label for="phone">Phone</label>
+  <input id="phone" maxlength="40" name="phone" type="tel" required>
+
+  <label for="00NVD000003CM33">Tour</label>
+  <select id="00NVD000003CM33" name="00NVD000003CM33" title="Tour" required>
+    <option value="">--None--</option>
+    <option value="Antigua Private Tour">Antigua Private Tour</option>
+    <option value="Atitlan Private Tour">Atitlan Private Tour</option>
+    <option value="Cenotes &amp; ATVs compartidas Private Tour">Cenotes &amp; ATVs compartidas Private Tour</option>
+    <option value="Cenotes &amp; ATVs doubles &amp; Zipline Private Tour">Cenotes &amp; ATVs doubles &amp; Zipline Private Tour</option>
+    <option value="Cenotes &amp; ATVs single  &amp; Zipline Private Tour">Cenotes &amp; ATVs single  &amp; Zipline Private Tour</option>
+    <option value="Cenotes &amp; ATVs Single Private Tour">Cenotes &amp; ATVs Single Private Tour</option>
+    <option value="Cenotes &amp; Turtles Private Tour">Cenotes &amp; Turtles Private Tour</option>
+    <option value="Cenotes Express Private Tour">Cenotes Express Private Tour</option>
+    <option value="Chapultepec Private Tour">Chapultepec Private Tour</option>
+    <option value="Chichen Express Private Tour">Chichen Express Private Tour</option>
+    <option value="Chichen Itza &amp; Coba Private Tour">Chichen Itza &amp; Coba Private Tour</option>
+    <option value="Chichen Itza &amp; Ek Balam Private Tour">Chichen Itza &amp; Ek Balam Private Tour</option>
+    <option value="Coba &amp; Tulum Private Tour">Coba &amp; Tulum Private Tour</option>
+    <option value="Ek Balam Private Tour">Ek Balam Private Tour</option>
+    <option value="Food and Tasting Private Tour">Food and Tasting Private Tour</option>
+    <option value="Food Private Tour">Food Private Tour</option>
+    <option value="Pacaya Private Tour">Pacaya Private Tour</option>
+    <option value="Private Transfer">Private Transfer</option>
+    <option value="Tailor">Tailor</option>
+    <option value="Temazcal Private Tour">Temazcal Private Tour</option>
+    <option value="Teotihuacan &amp; Food Private Tour with no alcohol">Teotihuacan &amp; Food Private Tour with no alcohol</option>
+    <option value="Teotihuacan &amp; Hot Air Balloon Tour">Teotihuacan &amp; Hot Air Balloon Tour</option>
+    <option value="Teotihuacan Express Private Tour">Teotihuacan Express Private Tour</option>
+    <option value="Teotihuacan Private Tour">Teotihuacan Private Tour</option>
+    <option value="Teotihuacan Private Tour 2P">Teotihuacan Private Tour 2P</option>
+    <option value="Teotihuacan Private Tour 3P">Teotihuacan Private Tour 3P</option>
+    <option value="Tikal from Antigua Private Tour">Tikal from Antigua Private Tour</option>
+    <option value="Tikal from Flores Private Tour">Tikal from Flores Private Tour</option>
+    <option value="Tulum &amp; Turtles Private Tour">Tulum &amp; Turtles Private Tour</option>
+    <option value="Tulum Express Private Tour">Tulum Express Private Tour</option>
+    <option value="Turtles Express Private Tour">Turtles Express Private Tour</option>
+    <option value="VIP Cenotes Private Tour">VIP Cenotes Private Tour</option>
+    <option value="VIP Chichen Itza Private Tour">VIP Chichen Itza Private Tour</option>
+    <option value="VIP Coba Private Tour">VIP Coba Private Tour</option>
+    <option value="VIP Tulum Private Tour">VIP Tulum Private Tour</option>
+    <option value="VIP Whale Shark Private Tour">VIP Whale Shark Private Tour</option>
+    <option value="Walking Private tour">Walking Private tour</option>
+    <option value="Xochimilco &amp; Coyoacan Private Tour">Xochimilco &amp; Coyoacan Private Tour</option>
+  </select>
+
+  <label for="tourDateUser">Tour Date</label>
+  <input id="tourDateUser" name="00NHr00000iAwPP" type="text" placeholder="dd/mm/yyyy" required autocomplete="off">
+
+  <label for="00NVD000003CMKn">Hotel</label>
+  <input id="00NVD000003CMKn" maxlength="255" name="00NVD000003CMKn" type="text">
+
+  <label for="00NHr00000iAwPC">Cantidad de Adultos</label>
+  <input id="00NHr00000iAwPC" name="00NHr00000iAwPC" type="number" min="0" step="1" value="2">
+
+  <label for="00NHr00000iAwPE">Cantidad de Niños</label>
+  <input id="00NHr00000iAwPE" name="00NHr00000iAwPE" type="number" min="0" step="1" value="0">
+
+  <label for="00NHr00000iAwPJ">Cantidad de Bebes</label>
+  <input id="00NHr00000iAwPJ" name="00NHr00000iAwPJ" type="number" min="0" step="1" value="0">
+
+  <input id="00NVD000003CMFx" name="00NVD000003CMFx" type="hidden" value="1">
+  <input id="00NHr00000iAwPD" name="00NHr00000iAwPD" type="hidden" value="Website (Book Now)">
+
+  <input type="submit" name="submit" value="Submit">
+</form>
+
+<script>
+  $(function () {
+    $("#tourDateUser").datepicker({
+      dateFormat: "dd/mm/yy"
+    });
+  });
+</script>
+
+</body>
+</html>

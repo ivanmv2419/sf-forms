@@ -99,6 +99,29 @@
   <label for="tourDateUser">Tour Date</label>
   <input id="tourDateUser" name="00NHr00000iAwPP" type="text" placeholder="dd/mm/yyyy" required autocomplete="off">
 
+  <label for="00NHr00000iAwPL">Pickup Time:</label>
+    <select id="00NHr00000iAwPL" name="00NHr00000iAwPL">
+      <option value="">-- Selecciona un horario --</option>
+      <option value="04:00">04:00</option>
+      <option value="05:30">05:30</option>
+      <option value="06:30">06:30</option>
+      <option value="06:45">06:45</option>
+      <option value="07:00">07:00</option>
+      <option value="07:30">07:30</option>
+      <option value="08:00">08:00</option>
+      <option value="08:30">08:30</option>
+      <option value="09:00">09:00</option>
+      <option value="10:00">10:00</option>
+      <option value="10:30">10:30</option>
+      <option value="11:00">11:00</option>
+      <option value="11:30">11:30</option>
+      <option value="14:30">14:30</option>
+      <option value="15:00">15:00</option>
+      <option value="15:30">15:30</option>
+    </select>
+  <br>
+
+
   <label for="00NVD000003CMKn">Hotel</label>
   <input id="00NVD000003CMKn" maxlength="255" name="00NVD000003CMKn" type="text">
 
@@ -112,10 +135,12 @@
   <input id="00NHr00000iAwPJ" name="00NHr00000iAwPJ" type="number" min="0" step="1" value="0">
 
   <label for="00NHr00000iAwPK">Something special you would like to do?</label>
-  <textarea id="00NHr00000iAwPK" name="00NHr00000iAwPK" rows="3"></textarea>
+  <input id="00NHr00000iAwPK" name="00NHr00000iAwPK" type="text" maxlength="255" />
+  <br>
 
   <input id="00NVD000003CMFx" name="00NVD000003CMFx" type="hidden" value="1">
   <input id="00NHr00000iAwPD" name="00NHr00000iAwPD" type="hidden" value="Website (Book Now)">
+  <input  id="00NHr00001RRYTm" maxlength="255" name="00NHr00001RRYTm" size="20" type="hidden" value="" /><br> <--Campo oculto, guarda ID o etiqueta de Google Ads-->
 
   <input type="submit" name="submit" value="Submit">
 </form>
@@ -130,5 +155,6 @@
 
 </body>
 </html>
+
 
 

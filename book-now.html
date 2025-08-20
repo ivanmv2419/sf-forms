@@ -40,8 +40,8 @@
 </head>
 <body>
 
-<form action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DVD000006P1YX" method="POST">
-  <input type="hidden" name="oid" value="00DVD000006P1YX">
+<form action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DVD000006P1YX" method="POST"> <!--Usar solo en pruebas, la URL cambia en PROD-->
+  <input type="hidden" name="oid" value="00DVD000006P1YX"> <!--Usar solo en pruebas, el ID cambia en PROD-->
   <input type="hidden" name="retURL" value="https://myquestconcierge.com">
 
   <!-- Debug -->
@@ -140,7 +140,7 @@
 
   <input id="00NVD000003CMFx" name="00NVD000003CMFx" type="hidden" value="1">
   <input id="00NHr00000iAwPD" name="00NHr00000iAwPD" type="hidden" value="Website (Book Now)">
-  <input  id="00NHr00001RRYTm" maxlength="255" name="00NHr00001RRYTm" size="20" type="hidden" value="" /><br> <--Campo oculto, guarda ID o etiqueta de Google Ads-->
+  <input  id="00NHr00001RRYTm" maxlength="255" name="00NHr00001RRYTm" size="20" type="hidden" value="" /><br> <!--Campo oculto, guarda ID o etiqueta de Google Ads-->
 
   <input type="submit" name="submit" value="Submit">
 </form>
@@ -155,6 +155,7 @@
 
 </body>
 </html>
+
 
 
 

@@ -283,5 +283,26 @@
             updateCompanyField();
         });
     </script>
+    <script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'es_MX'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00DgK00000AH27h',
+				'Mensajeria_Web_GitHub',
+				'https://orgfarm-f635f3e3b2-dev-ed.develop.my.site.com/ESWMensajeriaWebGitHub1757053434304',
+				{
+					scrt2URL: 'https://orgfarm-f635f3e3b2-dev-ed.develop.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+    </script>
+    <script type='text/javascript' src='https://orgfarm-f635f3e3b2-dev-ed.develop.my.site.com/ESWMensajeriaWebGitHub1757053434304/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
 </body>
 </html>
+

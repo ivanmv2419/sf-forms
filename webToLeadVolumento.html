@@ -258,5 +258,30 @@
             </form>
         </div>
     </div>
+
+    <script>
+        // Función para actualizar el campo compañía automáticamente
+        function updateCompanyField() {
+            const firstName = document.getElementById('first_name').value.trim();
+            const lastName = document.getElementById('last_name').value.trim();
+            const companyField = document.getElementById('company');
+            
+            // Concatenar nombre y apellido
+            if (firstName || lastName) {
+                companyField.value = (firstName + ' ' + lastName).trim();
+            } else {
+                companyField.value = '';
+            }
+        }
+
+        // Agregar event listeners a los campos de nombre y apellido
+        document.getElementById('first_name').addEventListener('input', updateCompanyField);
+        document.getElementById('last_name').addEventListener('input', updateCompanyField);
+        
+        // También actualizar cuando se envíe el formulario por seguridad
+        document.querySelector('form').addEventListener('submit', function(e) {
+            updateCompanyField();
+        });
+    </script>
 </body>
 </html>

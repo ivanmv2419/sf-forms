@@ -316,8 +316,8 @@
 
     <main class="main-container">
         <section class="welcome-section">
-            <h2>Centro de Herramientas</h2>
-            <p>Formularios, herramientas y recursos de Salesforce desde un solo lugar</p>
+            <h2>Mi Hub de Herramientas</h2>
+            <p>Herramientas de trabajo organizadas para un acceso rápido y eficiente</p>
         </section>
 
         <div class="categories">
@@ -330,7 +330,7 @@
                     <h3 class="category-title">Web-to-Lead</h3>
                 </div>
                 <p class="category-description">
-                    Formularios para capturar leads y convertir visitantes en oportunidades de negocio
+                    Formularios optimizados para generar leads de alta calidad
                 </p>
                 <div class="tool-links">
                     <a href="book-now.html" class="tool-link">
@@ -357,10 +357,10 @@
                     <h3 class="category-title">Herramientas Web</h3>
                 </div>
                 <p class="category-description">
-                    Calculadoras, cotizadores y herramientas interactivas para optimizar tu trabajo
+                    Calculadoras y herramientas para análisis y cotizaciones
                 </p>
                 <div class="tool-links">
-                    <a href="cotizadorWebPNL.html" class="tool-link pulse" onclick="showComingSoon('Cotizador')">
+                    <a href="cotizadorWebPNL.html" class="tool-link pulse">
                         <i class="fas fa-calculator"></i>
                         <span class="tool-name">Cotizador de Proyectos</span>
                     </a>
@@ -368,27 +368,16 @@
             </div>
         </div>
 
-        <div class="add-new-section">
-            <h3>¿Necesitas agregar una nueva herramienta?</h3>
-            <p>Contacta al administrador para añadir más formularios o herramientas a este hub</p>
-            <button class="add-btn" onclick="showAddTool()">
-                <i class="fas fa-plus"></i>
-                Solicitar Nueva Herramienta
-            </button>
-        </div>
+
     </main>
 
     <footer class="footer">
-        <p>&copy; 2025 Salesforce Hub. Diseñado para optimizar tu flujo de trabajo.</p>
+        <p>Hub Personal de Herramientas</p>
     </footer>
 
     <script>
         function showComingSoon(toolType) {
-            alert(`¡${toolType} estará disponible pronto! 🚀\n\nEsta funcionalidad se encuentra en desarrollo y estará lista en las próximas actualizaciones.`);
-        }
-
-        function showAddTool() {
-            alert('📧 Para solicitar una nueva herramienta:\n\n1. Envía un email con los detalles de la herramienta\n2. Incluye el propósito y funcionalidades requeridas\n3. Especifica si necesita integración con Salesforce\n\n¡Tu solicitud será procesada lo antes posible!');
+            // Function kept for potential future use
         }
 
         // Add loading animation on page load

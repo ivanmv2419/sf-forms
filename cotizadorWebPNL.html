@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estimador de Costos - Proyectos Salesforce</title>
+<style>
+/* ================== ESTILOS ================== */
+* {margin:0; padding:0; box-sizing:border-box;}
+body {font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100vh; padding:20px;}
+.container {max-width:1400px; margin:0 auto; background:white; border-radius:15px; box-shadow:0 20px 40px rgba(0,0,0,0.1); overflow:hidden;}
+.header {background:linear-gradient(135deg,#2c3e50,#3498db); color:white; padding:20px 30px; text-align:center;}
+.header h1 {font-size:2rem; margin-bottom:10px;}
+.controls {padding:20px 30px; background:#f8f9fa; border-bottom:1px solid #dee2e6;}
+.control-group {display:flex; gap:15px; align-items:center; flex-wrap:wrap;}
+.btn {background:linear-gradient(135deg,#28a745,#20c997); color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:500; transition: all 0.3s ease;}
+.btn:hover {transform:translateY(-2px); box-shadow:0 5px 15px rgba(40,167,69,0.3);}
+.btn-danger {background:linear-gradient(135deg,#dc3545,#e83e8c);}
+.btn-danger:hover {box-shadow:0 5px 15px rgba(220,53,69,0.3);}
+.input-group {display:flex; flex-direction:column; gap:5px;}
+.input-group label {font-size:0.9rem; font-weight:500; color:#495057;}
+.input-group input {padding:8px 12px; border:2px solid #e9ecef; border-radius:6px; transition:border-color 0.3s ease;}
+.input-group input:focus {outline:none; border-color:#007bff;}
+.table-container {padding:0 30px 30px; overflow-x:auto;}
+.table {width:100%; border-collapse:collapse; margin-top:20px; background:white; border-radius:10px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.08);}
+.table th {background:linear-gradient(135deg,#495057,#6c757d); color:white; padding:15px 10px; text-align:center; font-weight:600; font-size:0.9rem; position:sticky; top:0; z-index:10;}
+.table td {padding:12px 10px; border-bottom:1px solid #e9ecef; text-align:center; vertical-align:middle;}
+.table tbody tr:hover {background-color:#f8f9fa;}
+.table input, .table select {width:100%; padding:6px 8px; border:1px solid #ced4da; border-radius:4px; font-size:0.9rem;}
+.table input:focus, .table select:focus {outline:none; border-color:#007bff; box-shadow:0 0 0 2px rgba(0,123,255,0.25);}
+.totals-row {background:linear-gradient(135deg,#f8f9fa,#e9ecef) !important; font-weight:bold; border-top:3px solid #007bff;}
+.totals-row td {font-size:1rem; color:#495057;}
+.margin-indicator {padding:6px 12px; border-radius:20px; font-weight:bold; color:white; display:inline-block;}
+.margin-low {background:linear-gradient(135deg,#dc3545,#e83e8c); animation:pulse 2s infinite;}
+.margin-medium {background:linear-gradient(135deg,#ffc107,#fd7e14);}
+.margin-high {background:linear-gradient(135deg,#28a745,#20c997);}
+@keyframes pulse {0% {opacity:1;} 50% {opacity:0.7;} 100% {opacity:1;}}
+.service-name {max-width:150px;}
+.consultant-header {background:linear-gradient(135deg,#17a2b8,#20c997) !important; min-width:120px;}
+.pm-header {background:linear-gradient(135deg,#6f42c1,#e83e8c) !important;}
+.warranty-header {background:linear-gradient(135deg,#fd7e14,#ffc107) !important;}
+.summary-card {background:linear-gradient(135deg,#f8f9fa,#ffffff); border-radius:10px; padding:20px; margin:20px 0; box-shadow:0 5px 15px rgba(0,0,0,0.08);}
+.summary-grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px;}
+.summary-item {text-align:center; padding:15px; background:white; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.summary-item h4 {color:#495057; margin-bottom:10px;}
+.summary-item .value {font-size:1.5rem; font-weight:bold; color:#007bff;}
+.delete-btn {background:#dc3545; color:white; border:none; padding:5px 8px; border-radius:4px; cursor:pointer; font-size:0.8rem;}
+.delete-btn:hover {background:#c82333;}
+.calculation-note {background:#e7f3ff; border:1px solid #b8daff; border-radius:8px; padding:15px; margin:20px 30px; font-size:0.9rem; color:#004085;}
+.calculation-note strong {color:#002752;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>🚀 Estimador de Costos - Proyectos Salesforce</h1>
+<p>Gestión automática de márgenes y costos de consultoría</p>
+</div>
+
+<div class="calculation-note">
+<strong>📊 Nota sobre cálculo de márgenes:</strong> El margen se calcula sobre el <strong>costo facturable</strong> (sin incluir garantía): <strong>Precio = Costo Facturable / (1 - Margen%)</strong>
+<br><strong>Costo Total Real</strong> = Costo Facturable + Costo Garantía. <strong>Margen Real</strong> = (Precio - Costo Total Real) / Precio × 100
+</div>
+
+<div class="controls">
+<div class="control-group">
+<button class="btn" onclick="addService()">➕ Agregar Servicio</button>
+<button class="btn" onclick="addConsultant()">👥 Agregar Consultor</button>
+<button class="btn btn-danger" onclick="removeConsultant()">➖ Quitar Consultor</button>
+<button class="btn" onclick="exportTableToExcel()">📤 Exportar a Excel</button>
+</div>
+</div>
+
+<div class="table-container">
+<table class="table" id="projectTable">
+<thead>
+<tr id="headerRow">
+<th>Alcance Fijo</th>
+<th>Servicio</th>
+<th>Horas Totales</th>
+<th>Margen %</th>
+<th>PM/BA %<br><small>% sobre Horas Totales</small></th>
+<th>Garantía %<br><small>% sobre Horas Totales</small></th>
+<th class="pm-header">PM/BA Horas<br><small>Tarifa: $<input type="number" id="pmRate" value="30" min="0" step="0.01" onchange="calculateAll()"></small></th>
+<th class="warranty-header">Garantía Horas<br><small>No facturado</small></th>
+<th class="consultant-header">Consultor 1<br><small>Tarifa: $<input type="number" class="consultant-rate" data-index="0" value="30" min="0" step="0.01" onchange="calculateAll()"></small></th>
+<th>Costo Facturable</th>
+<th>Costo Garantía</th>
+<th>Costo Total Real</th>
+<th>Precio Cliente</th>
+<th>Margen $</th>
+<th>Margen Real %</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+
+<div class="summary-card">
+<h3 style="text-align:center; margin-bottom:20px; color:#495057;">📊 Resumen del Proyecto</h3>
+<div class="summary-grid" id="summaryGrid">
+<div class="summary-item"><h4>Total Horas PM/BA</h4><div class="value" id="totalPmHours">0</div></div>
+<div class="summary-item"><h4>Total Horas Desarrollo</h4><div class="value" id="totalDevHours">0</div></div>
+<div class="summary-item"><h4>Total Horas Garantía</h4><div class="value" id="totalWarrantyHours">0</div></div>
+<div class="summary-item"><h4>Total Horas</h4><div class="value" id="totalHours">0</div></div>
+<div class="summary-item"><h4>Costo Facturable</h4><div class="value" id="totalBillableCost">$0</div></div>
+<div class="summary-item"><h4>Costo Garantía</h4><div class="value" id="totalWarrantyCost">$0</div></div>
+<div class="summary-item"><h4>Costo Total Real</h4><div class="value" id="totalRealCost">$0</div></div>
+<div class="summary-item"><h4>Precio Cliente</h4><div class="value" id="totalPrice">$0</div></div>
+<div class="summary-item"><h4>Margen Total</h4><div class="value" id="totalMarginAmount">$0</div></div>
+<div class="summary-item"><h4>Margen Real %</h4><div class="value margin-indicator" id="totalMarginPercent">0%</div></div>
+</div>
+</div>
+</div>
+
+<script>
+let consultantCount = 1;
+let serviceCount = 0;
+
+function addService(){
+    serviceCount++;
+    const tbody=document.getElementById('tableBody');
+    const row=document.createElement('tr');
+
+    let consultantCells='';
+    for(let i=0;i<consultantCount;i++){
+        consultantCells+='<td><input type="number" class="consultant-hours" data-consultant="'+i+'" min="0" step="0.1" placeholder="% dedicación" onchange="calculateRow(this)"></td>';
+    }
+
+    row.innerHTML=
+    '<td><input type="checkbox" class="fixed-checkbox" onchange="calculateRow(this)"></td>'+
+    '<td><input type="text" class="service-name" placeholder="Servicio '+serviceCount+'" value="Servicio '+serviceCount+'"></td>'+
+    '<td><input type="number" class="total-hours" min="0" step="0.1" onchange="calculateRow(this)"></td>'+
+    '<td><input type="number" class="margin-percent" min="0" max="100" step="1" value="30" onchange="calculateRow(this)"></td>'+
+    '<td><input type="number" class="pm-percent" min="0" max="100" step="1" value="0" onchange="calculateRow(this)"></td>'+
+    '<td><input type="number" class="warranty-percent" min="0" max="100" step="1" value="0" onchange="calculateRow(this)"></td>'+
+    '<td><input type="number" class="pm-hours" readonly></td>'+
+    '<td><input type="number" class="warranty-hours" readonly></td>'+
+    consultantCells+
+    '<td class="billable-cost">$0</td>'+
+    '<td class="warranty-cost">$0</td>'+
+    '<td class="total-real-cost">$0</td>'+
+    '<td class="client-price">$0</td>'+
+    '<td class="margin-amount">$0</td>'+
+    '<td class="margin-percent-display">0%</td>'+
+    '<td><button class="delete-btn" onclick="removeService(this)">🗑️</button></td>';
+
+    tbody.appendChild(row);
+    updateTotalsRow();
+}
+
+function addConsultant(){
+    consultantCount++;
+    const headerRow=document.getElementById('headerRow');
+    const newHeader=document.createElement('th');
+    newHeader.className='consultant-header';
+    newHeader.innerHTML='Consultor '+consultantCount+'<br><small>Tarifa: $<input type="number" class="consultant-rate" data-index="'+(consultantCount-1)+'" value="30" min="0" step="0.01" onchange="calculateAll()"></small>';
+
+    headerRow.insertBefore(newHeader, headerRow.children[headerRow.children.length-7]);
+
+    document.querySelectorAll('#tableBody tr').forEach(row=>{
+        const newCell=document.createElement('td');
+        newCell.innerHTML='<input type="number" class="consultant-hours" data-consultant="'+(consultantCount-1)+'" min="0" step="0.1" placeholder="% dedicación" onchange="calculateRow(this)">';
+        row.insertBefore(newCell, row.children[row.children.length-7]);
+    });
+    updateTotalsRow();
+}
+
+function removeConsultant(){
+    if(consultantCount<=1){alert('Debe haber al menos un consultor'); return;}
+    const headerRow=document.getElementById('headerRow');
+    headerRow.removeChild(headerRow.children[8+consultantCount-1]);
+    document.querySelectorAll('#tableBody tr').forEach(row=>{
+        row.removeChild(row.children[8+consultantCount-1]);
+    });
+    consultantCount--;
+    updateTotalsRow();
+    calculateAll();
+}
+
+function removeService(btn){btn.closest('tr').remove(); updateTotalsRow(); calculateAll();}
+
+function calculateRow(element){
+    const row=element.closest('tr');
+    const isFixed=row.querySelector('.fixed-checkbox').checked;
+    const marginInput=row.querySelector('.margin-percent');
+
+    if(isFixed){
+        // ALCANCE FIJO: Solo permitir editar Costo Facturable y Margen %
+        // Deshabilitar y poner en 0 todas las demás columnas
+        row.querySelector('.total-hours').value = 0;
+        row.querySelector('.total-hours').disabled = true;
+        row.querySelector('.pm-percent').value = 0;
+        row.querySelector('.pm-percent').disabled = true;
+        row.querySelector('.warranty-percent').value = 0;
+        row.querySelector('.warranty-percent').disabled = true;
+        row.querySelector('.pm-hours').value = 0;
+        row.querySelector('.warranty-hours').value = 0;
+        
+        // Deshabilitar todas las columnas de consultores
+        row.querySelectorAll('.consultant-hours').forEach(input => {
+            input.value = 0;
+            input.disabled = true;
+        });
+
+        // Habilitar solo el campo de costo facturable para edición manual
+        const billableCostElement = row.querySelector('.billable-cost-input');
+        if (!billableCostElement) {
+            // Convertir el td de solo lectura en un input editable
+            const billableCostTd = row.querySelector('.billable-cost');
+            billableCostTd.innerHTML = '<input type="number" class="billable-cost-input" min="0" step="0.01" placeholder="Costo del tercero" onchange="calculateRow(this)">';
+        }
+
+        // Obtener el costo facturable ingresado manualmente
+        const billableCost = parseFloat(row.querySelector('.billable-cost-input').value) || 0;
+        const warrantyCost = 0; // No hay garantía en alcance fijo
+        const totalRealCost = billableCost; // Solo el costo facturable
+
+        // Calcular precio cliente basado en costo facturable y margen
+        const marginPct = parseFloat(marginInput.value) || 30;
+        const clientPrice = billableCost / (1 - marginPct/100);
+        const marginAmount = clientPrice - totalRealCost;
+        const realMarginPercent = (clientPrice > 0 ? (marginAmount / clientPrice * 100) : 0).toFixed(1);
+
+        // Actualizar la fila
+        row.querySelector('.warranty-cost').textContent = '$0.00';
+        row.querySelector('.total-real-cost').textContent = '$' + totalRealCost.toFixed(2);
+        row.querySelector('.client-price').textContent = '$' + clientPrice.toFixed(2);
+        row.querySelector('.margin-amount').textContent = '$' + marginAmount.toFixed(2);
+        row.querySelector('.margin-percent-display').textContent = realMarginPercent + '%';
+
+        // Guardar valores para totales
+        row.dataset.pmHours = 0;
+        row.dataset.warrantyHours = 0;
+        row.dataset.billableCost = billableCost;
+        row.dataset.warrantyCost = 0;
+        row.dataset.totalRealCost = totalRealCost;
+        row.dataset.clientPrice = clientPrice;
+        row.dataset.marginAmount = marginAmount;
+
+    } else {
+        // ALCANCE NORMAL: Funcionalidad original
+        // Habilitar todos los campos
+        row.querySelector('.total-hours').disabled = false;
+        row.querySelector('.pm-percent').disabled = false;
+        row.querySelector('.warranty-percent').disabled = false;
+        row.querySelectorAll('.consultant-hours').forEach(input => input.disabled = false);
+
+        // Convertir el input de costo facturable de vuelta a solo lectura
+        const billableCostTd = row.querySelector('.billable-cost');
+        if (row.querySelector('.billable-cost-input')) {
+            billableCostTd.innerHTML = '$0';
+            billableCostTd.className = 'billable-cost';
+        }
+
+        const totalH=parseFloat(row.querySelector('.total-hours').value)||0;
+        const pmRate=parseFloat(document.getElementById('pmRate').value)||0;
+        const pmPercent=parseFloat(row.querySelector('.pm-percent').value)||0;
+        const warrantyPercent=parseFloat(row.querySelector('.warranty-percent').value)||0;
+
+        // Calcular horas PM y Garantía
+        const pmH = totalH * pmPercent / 100;
+        const warrantyH = totalH * warrantyPercent / 100;
+        row.querySelector('.pm-hours').value = pmH.toFixed(1);
+        row.querySelector('.warranty-hours').value = warrantyH.toFixed(1);
+
+        // Calcular costo facturable (desarrollo + PM)
+        let totalConsultantCost = 0;
+        row.querySelectorAll('.consultant-hours').forEach((input,i)=>{
+            const dedication=parseFloat(input.value)||0;
+            const hours=totalH*dedication/100;
+            const rate=parseFloat(document.querySelector('.consultant-rate[data-index="'+i+'"]').value)||0;
+            totalConsultantCost+=hours*rate;
+            input.title=hours.toFixed(1)+'h × $'+rate+' = $'+(hours*rate).toFixed(2);
+        });
+
+        const billableCost = pmH * pmRate + totalConsultantCost;
+
+        // Calcular costo de garantía (proporcional a dedicación)
+        let warrantyCost = 0;
+        row.querySelectorAll('.consultant-hours').forEach((input,i)=>{
+            const dedication=parseFloat(input.value)||0;
+            const rate=parseFloat(document.querySelector('.consultant-rate[data-index="'+i+'"]').value)||0;
+            warrantyCost += warrantyH * dedication / 100 * rate;
+        });
+
+        const totalRealCost = billableCost + warrantyCost;
+
+        // Calcular precio cliente basado en costo facturable
+        const marginPct=parseFloat(marginInput.value)||30;
+        const clientPrice = billableCost / (1 - marginPct/100);
+        const marginAmount = clientPrice - totalRealCost;
+        const realMarginPercent = (clientPrice > 0 ? (marginAmount / clientPrice * 100) : 0).toFixed(1);
+
+        // Actualizar la fila
+        row.querySelector('.billable-cost').textContent = '$' + billableCost.toFixed(2);
+        row.querySelector('.warranty-cost').textContent = '$' + warrantyCost.toFixed(2);
+        row.querySelector('.total-real-cost').textContent = '$' + totalRealCost.toFixed(2);
+        row.querySelector('.client-price').textContent = '$' + clientPrice.toFixed(2);
+        row.querySelector('.margin-amount').textContent = '$' + marginAmount.toFixed(2);
+        row.querySelector('.margin-percent-display').textContent = realMarginPercent + '%';
+
+        // Guardar valores para totales
+        row.dataset.pmHours = pmH;
+        row.dataset.warrantyHours = warrantyH;
+        row.dataset.billableCost = billableCost;
+        row.dataset.warrantyCost = warrantyCost;
+        row.dataset.totalRealCost = totalRealCost;
+        row.dataset.clientPrice = clientPrice;
+        row.dataset.marginAmount = marginAmount;
+    }
+
+    updateTotalsRow();
+}
+
+function calculateAll(){
+    document.querySelectorAll('#tableBody tr').forEach(row=>calculateRow(row.querySelector('input')));
+}
+
+function updateTotalsRow(){
+    let totalPm=0, totalDev=0, totalWarranty=0, totalHours=0;
+    let totalBillable=0, totalWarrantyCost=0, totalReal=0, totalPrice=0, totalMargin=0;
+
+    document.querySelectorAll('#tableBody tr').forEach(row=>{
+        const totalH=parseFloat(row.querySelector('.total-hours').value)||0;
+        const pmH=parseFloat(row.dataset.pmHours)||0;
+        const warrantyH=parseFloat(row.dataset.warrantyHours)||0;
+        const billable=parseFloat(row.dataset.billableCost)||0;
+        const warranty=parseFloat(row.dataset.warrantyCost)||0;
+        const real=parseFloat(row.dataset.totalRealCost)||0;
+        const price=parseFloat(row.dataset.clientPrice)||0;
+        const margin=parseFloat(row.dataset.marginAmount)||0;
+
+        totalPm+=pmH;
+        totalWarranty+=warrantyH;
+        totalDev+=totalH;
+        totalHours+=totalH + pmH + warrantyH;
+        totalBillable+=billable;
+        totalWarrantyCost+=warranty;
+        totalReal+=real;
+        totalPrice+=price;
+        totalMargin+=margin;
+    });
+
+    const totalMarginPct=(totalPrice>0?(totalMargin/totalPrice*100):0).toFixed(1);
+
+    document.getElementById('totalPmHours').textContent=totalPm.toFixed(1);
+    document.getElementById('totalDevHours').textContent=totalDev.toFixed(1);
+    document.getElementById('totalWarrantyHours').textContent=totalWarranty.toFixed(1);
+    document.getElementById('totalHours').textContent=totalHours.toFixed(1);
+    document.getElementById('totalBillableCost').textContent='$'+totalBillable.toFixed(2);
+    document.getElementById('totalWarrantyCost').textContent='$'+totalWarrantyCost.toFixed(2);
+    document.getElementById('totalRealCost').textContent='$'+totalReal.toFixed(2);
+    document.getElementById('totalPrice').textContent='$'+totalPrice.toFixed(2);
+    document.getElementById('totalMarginAmount').textContent='$'+totalMargin.toFixed(2);
+    document.getElementById('totalMarginPercent').textContent=totalMarginPct+'%';
+
+    // Actualizar indicador de color
+    const indicator=document.getElementById('totalMarginPercent');
+    indicator.className='value margin-indicator';
+    if(totalMarginPct<20) indicator.classList.add('margin-low');
+    else if(totalMarginPct<40) indicator.classList.add('margin-medium');
+    else indicator.classList.add('margin-high');
+}
+
+// Función de exportación a Excel simple
+function exportTableToExcel(){
+    const table=document.getElementById('projectTable');
+    const html=table.outerHTML.replace(/ /g,'%20');
+    const a=document.createElement('a');
+    a.href='data:application/vnd.ms-excel,'+html;
+    a.download='estimador_proyecto.xls';
+    a.click();
+}
+</script>
+</body>
+</html>

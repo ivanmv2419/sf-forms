@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Process Builder de Salesforce</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .upload-area {
+            border: 3px dashed #4facfe;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #f8fcff, #e8f8ff);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: #00f2fe;
+            background: linear-gradient(135deg, #e8f8ff, #d1f2ff);
+        }
+        .upload-area.dragover {
+            border-color: #00f2fe;
+            background: linear-gradient(135deg, #e8f8ff, #d1f2ff);
+            transform: scale(1.02);
+        }
+        #fileInput {
+            display: none;
+        }
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .upload-text {
+            font-size: 1.2em;
+            color: #666;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2em;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f0f8ff;
+        }
+        .summary {
+            background: linear-gradient(135deg, #e8f8ff, #d1f2ff);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4facfe;
+        }
+        .error {
+            background: linear-gradient(135deg, #ffe6e6, #ffcccc);
+            color: #d00;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 5px solid #d00;
+        }
+        .success {
+            background: linear-gradient(135deg, #e6ffe6, #ccffcc);
+            color: #080;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 5px solid #080;
+        }
+        .warning {
+            background: linear-gradient(135deg, #fff3cd, #ffe69c);
+            color: #856404;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 5px solid #ffc107;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 3px solid #4facfe;
+        }
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #4facfe;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .flow-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+        .trigger-type {
+            display: inline-block;
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .trigger-onCreate {
+            background: #e8f5e8;
+            color: #2d5a2d;
+        }
+        .trigger-onUpdate {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .trigger-onDelete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .metadata-info {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Analizador de Process Builder de Salesforce</h1>
+        <h2 style="text-align: center; color: #666; margin-top: -10px;">Con Análisis de TriggerType</h2>
+        
+        <div id="uploadSection">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📦</div>
+                <div class="upload-text">
+                    <strong>Haz clic aquí o arrastra tu archivo flows.zip</strong><br>
+                    <small>Formato: .zip con archivos .flow de Salesforce</small><br>
+                    <small class="flow-info">Solo flows con processType=Workflow y status=Active + TriggerType</small>
+                </div>
+            </div>
+            <input type="file" id="fileInput" accept=".zip" />
+        </div>
+        
+        <div id="status" style="display: none;"></div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Configurar el área de carga
+        const uploadArea = document.querySelector('.upload-area');
+        const fileInput = document.getElementById('fileInput');
+        
+        // Eventos de drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            if (!file.name.endsWith('.zip')) {
+                showError('Por favor selecciona un archivo .zip válido');
+                return;
+            }
+            
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('status').style.display = 'block';
+            updateStatus('Procesando archivo ZIP...');
+            
+            analyzeFlowRules(file);
+        }
+        
+        function getTriggerTypeClass(triggerType) {
+            if (!triggerType) return 'trigger-type';
+            
+            const type = triggerType.toLowerCase();
+            if (type.includes('create')) return 'trigger-type trigger-onCreate';
+            if (type.includes('update')) return 'trigger-type trigger-onUpdate';
+            if (type.includes('delete')) return 'trigger-type trigger-onDelete';
+            return 'trigger-type';
+        }
+        
+        async function analyzeFlowRules(file) {
+            try {
+                // Leer el archivo zip
+                const zip = await JSZip.loadAsync(file);
+                
+                const flowRules = [];
+                let totalFiles = 0;
+                let processedFiles = 0;
+                let skippedFiles = 0;
+                
+                // Buscar todos los archivos .flow en todas las carpetas
+                const flowFiles = [];
+                zip.forEach((relativePath, file) => {
+                    if (relativePath.endsWith('.flow') && !file.dir) {
+                        flowFiles.push(relativePath);
+                    }
+                });
+                
+                totalFiles = flowFiles.length;
+                
+                if (totalFiles === 0) {
+                    showError('No se encontraron archivos .flow en el ZIP');
+                    return;
+                }
+                
+                updateStatus(`Encontrados ${totalFiles} archivos .flow. Procesando...`);
+                
+                // Procesar cada archivo .flow
+                for (const filePath of flowFiles) {
+                    try {
+                        const fileContent = await zip.file(filePath).async('string');
+                        const flowName = filePath.split('/').pop().replace('.flow', '');
+                        
+                        // Parsear XML usando DOMParser
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(fileContent, 'text/xml');
+                        
+                        // Verificar si hay errores de parsing
+                        const parseError = xmlDoc.getElementsByTagName('parsererror');
+                        if (parseError.length > 0) {
+                            console.warn(`Error parsing ${filePath}:`, parseError[0].textContent);
+                            skippedFiles++;
+                            continue;
+                        }
+                        
+                        // Verificar processType y status
+                        const processTypeEl = xmlDoc.getElementsByTagName('processType')[0];
+                        const statusEl = xmlDoc.getElementsByTagName('status')[0];
+                        
+                        const processType = processTypeEl ? processTypeEl.textContent : '';
+                        const status = statusEl ? statusEl.textContent : '';
+                        
+                        // Solo procesar si es processType=Workflow y status=Active
+                        if (processType !== 'Workflow' || status !== 'Active') {
+                            skippedFiles++;
+                            continue;
+                        }
+                        
+                        // Buscar TriggerType en processMetadataValues
+                        let triggerType = '';
+                        const processMetadataValues = xmlDoc.getElementsByTagName('processMetadataValues');
+                        
+                        for (let i = 0; i < processMetadataValues.length; i++) {
+                            const metadata = processMetadataValues[i];
+                            const nameEl = metadata.getElementsByTagName('name')[0];
+                            
+                            if (nameEl && nameEl.textContent === 'TriggerType') {
+                                const valueEl = metadata.getElementsByTagName('value')[0];
+                                if (valueEl) {
+                                    const stringValueEl = valueEl.getElementsByTagName('stringValue')[0];
+                                    if (stringValueEl) {
+                                        triggerType = stringValueEl.textContent;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        
+                        // Contar acciones por tipo - CORREGIR EMAIL ALERT
+                        const actions = {
+                            quickActions: xmlDoc.getElementsByTagName('quickActions').length,
+                            recordUpdates: xmlDoc.getElementsByTagName('recordUpdates').length,
+                            emailAlert: 0, // Contar manualmente
+                            apexPluginCalls: xmlDoc.getElementsByTagName('apexPluginCalls').length,
+                            recordCreates: xmlDoc.getElementsByTagName('recordCreates').length,
+                            flowActionCalls: xmlDoc.getElementsByTagName('flowActionCalls').length,
+                            submitForApprovalCalls: xmlDoc.getElementsByTagName('submitForApprovalCalls').length,
+                            processActionCalls: xmlDoc.getElementsByTagName('processActionCalls').length,
+                            chatterPosts: xmlDoc.getElementsByTagName('chatterPosts').length
+                        };
+                        
+                        // Contar email alerts correctamente
+                        const actionCalls = xmlDoc.getElementsByTagName('actionCalls');
+                        for (let j = 0; j < actionCalls.length; j++) {
+                            const actionTypeEl = actionCalls[j].getElementsByTagName('actionType')[0];
+                            if (actionTypeEl && actionTypeEl.textContent === 'emailAlert') {
+                                actions.emailAlert++;
+                            }
+                        }
+                        
+                        const totalActions = Object.values(actions).reduce((sum, count) => sum + count, 0);
+                        
+                        // Obtener información adicional del flow
+                        const labelEl = xmlDoc.getElementsByTagName('label')[0];
+                        const label = labelEl ? labelEl.textContent : flowName;
+                        
+                        const descriptionEl = xmlDoc.getElementsByTagName('description')[0];
+                        const description = descriptionEl ? descriptionEl.textContent : '';
+                        
+                        flowRules.push({
+                            flowName: flowName,
+                            label: label,
+                            description: description,
+                            processType: processType,
+                            status: status,
+                            triggerType: triggerType || 'No especificado',
+                            ...actions,
+                            total: totalActions
+                        });
+                        
+                        processedFiles++;
+                        updateStatus(`Procesando archivos... ${processedFiles}/${totalFiles} (${skippedFiles} omitidos)`);
+                        
+                    } catch (fileError) {
+                        console.error(`Error procesando archivo ${filePath}:`, fileError);
+                        skippedFiles++;
+                    }
+                }
+                
+                // Mostrar resultados
+                displayResults(flowRules, totalFiles, processedFiles, skippedFiles);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError(`Error al procesar el archivo: ${error.message}`);
+            }
+        }
+        
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    ${message}
+                </div>
+            `;
+        }
+        
+        function showError(message) {
+            document.getElementById('status').innerHTML = `
+                <div class="error">
+                    <strong>❌ Error:</strong> ${message}
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="location.reload()">Intentar de nuevo</button>
+                </div>
+            `;
+        }
+        
+        function displayResults(flows, totalFiles, processedFiles, skippedFiles) {
+            const totalFlows = flows.length;
+            const totalActions = flows.reduce((sum, flow) => sum + flow.total, 0);
+            
+            // Contar por tipo de trigger
+            const triggerTypeCounts = {};
+            flows.forEach(flow => {
+                const trigger = flow.triggerType;
+                triggerTypeCounts[trigger] = (triggerTypeCounts[trigger] || 0) + 1;
+            });
+            
+            // Calcular totales por tipo de acción
+            const totals = {
+                quickActions: flows.reduce((sum, flow) => sum + flow.quickActions, 0),
+                recordUpdates: flows.reduce((sum, flow) => sum + flow.recordUpdates, 0),
+                emailAlert: flows.reduce((sum, flow) => sum + flow.emailAlert, 0),
+                apexPluginCalls: flows.reduce((sum, flow) => sum + flow.apexPluginCalls, 0),
+                recordCreates: flows.reduce((sum, flow) => sum + flow.recordCreates, 0),
+                flowActionCalls: flows.reduce((sum, flow) => sum + flow.flowActionCalls, 0),
+                submitForApprovalCalls: flows.reduce((sum, flow) => sum + flow.submitForApprovalCalls, 0),
+                processActionCalls: flows.reduce((sum, flow) => sum + flow.processActionCalls, 0),
+                chatterPosts: flows.reduce((sum, flow) => sum + flow.chatterPosts, 0)
+            };
+            
+            let html = `
+                <div class="success">
+                    <strong>✅ Análisis de Flows completado!</strong>
+                </div>
+            `;
+            
+            if (skippedFiles > 0) {
+                html += `
+                    <div class="warning">
+                        <strong>⚠️ Información:</strong> Se omitieron ${skippedFiles} archivos que no cumplen los criterios (processType=Workflow y status=Active)
+                    </div>
+                `;
+            }
+            
+            // Crear estadísticas de TriggerType
+            let triggerStatsHtml = '';
+            Object.entries(triggerTypeCounts).forEach(([trigger, count]) => {
+                triggerStatsHtml += `
+                    <div class="stat-box">
+                        <div class="stat-number">${count}</div>
+                        <div class="stat-label">${trigger}</div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <div class="summary">
+                    <h3>📈 Resumen Ejecutivo de Flows</h3>
+                    <p><strong>Archivos procesados:</strong> ${processedFiles} de ${totalFiles} archivos .flow encontrados</p>
+                    <p><strong>Flows válidos:</strong> ${totalFlows} flows activos de tipo Workflow</p>
+                    
+                    <h4>🎯 Distribución por TriggerType:</h4>
+                    <div class="stats">
+                        ${triggerStatsHtml}
+                    </div>
+                    
+                    <h4>⚡ Distribución por tipo de acción:</h4>
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-number">${totalFlows}</div>
+                            <div class="stat-label">Flows Activos</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">${totalActions}</div>
+                            <div class="stat-label">Acciones Totales</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">${totals.quickActions}</div>
+                            <div class="stat-label">Acciones Rápidas</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">${totals.recordUpdates}</div>
+                            <div class="stat-label">Actualizar Registros</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">${totals.emailAlert}</div>
+                            <div class="stat-label">Alertas Email</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">${totals.apexPluginCalls}</div>
+                            <div class="stat-label">Apex</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">${totals.recordCreates}</div>
+                            <div class="stat-label">Crear Registros</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">${totals.flowActionCalls}</div>
+                            <div class="stat-label">Invocar Flows</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="btn" onclick="location.reload()">Analizar otro archivo</button>
+                </div>
+            `;
+            
+            if (totalFlows > 0) {
+                html += `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 150px;">Nombre del Flow</th>
+                                    <th style="min-width: 120px;">TriggerType</th>
+                                    <th style="width: 60px;">Acciones<br>Rápidas</th>
+                                    <th style="width: 70px;">Actualizar<br>Registros</th>
+                                    <th style="width: 60px;">Alertas<br>Email</th>
+                                    <th style="width: 50px;">Apex</th>
+                                    <th style="width: 60px;">Crear<br>Registros</th>
+                                    <th style="width: 60px;">Invocar<br>Flows</th>
+                                    <th style="width: 70px;">Enviar<br>Aprobación</th>
+                                    <th style="width: 60px;">Invocar<br>Procesos</th>
+                                    <th style="width: 60px;">Posts<br>Chatter</th>
+                                    <th style="width: 60px;">Total<br>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                // Ordenar por triggerType y luego por nombre del flow
+                flows.sort((a, b) => {
+                    if (a.triggerType !== b.triggerType) {
+                        return a.triggerType.localeCompare(b.triggerType);
+                    }
+                    return a.flowName.localeCompare(b.flowName);
+                });
+                
+                flows.forEach(flow => {
+                    const triggerClass = getTriggerTypeClass(flow.triggerType);
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${flow.flowName}</strong></td>
+                            <td>
+                                <div class="${triggerClass}">${flow.triggerType}</div>
+                            </td>
+                            <td style="text-align: center;">${flow.quickActions}</td>
+                            <td style="text-align: center;">${flow.recordUpdates}</td>
+                            <td style="text-align: center;">${flow.emailAlert}</td>
+                            <td style="text-align: center;">${flow.apexPluginCalls}</td>
+                            <td style="text-align: center;">${flow.recordCreates}</td>
+                            <td style="text-align: center;">${flow.flowActionCalls}</td>
+                            <td style="text-align: center;">${flow.submitForApprovalCalls}</td>
+                            <td style="text-align: center;">${flow.processActionCalls}</td>
+                            <td style="text-align: center;">${flow.chatterPosts}</td>
+                            <td style="text-align: center; font-weight: bold;">${flow.total}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('results').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

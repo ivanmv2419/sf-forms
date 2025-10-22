@@ -1,506 +1,830 @@
-import React, { useState } from 'react';
-import { Upload, AlertCircle, CheckCircle2, Search, ChevronDown, ChevronUp } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import Papa from 'papaparse';
-
-const SimilarPermissionSetCard = ({ ps1Name, ps1Objects, ps2Name, ps2Objects, differences, similarity }) => {
-  const [expanded, setExpanded] = useState(false);
-  
-  const getComparison = () => {
-    const allObjects = new Set([...Object.keys(ps1Objects), ...Object.keys(ps2Objects)]);
-    const coincidences = [];
-    const diffs = [];
-    
-    allObjects.forEach(obj => {
-      const perms1 = ps1Objects[obj];
-      const perms2 = ps2Objects[obj];
-      
-      if (!perms1) {
-        diffs.push({
-          object: obj,
-          type: 'only_ps2',
-          message: `Solo en ${ps2Name}`
-        });
-        return;
-      }
-      
-      if (!perms2) {
-        diffs.push({
-          object: obj,
-          type: 'only_ps1',
-          message: `Solo en ${ps1Name}`
-        });
-        return;
-      }
-      
-      const permLabels = {
-        create: 'Crear',
-        read: 'Leer',
-        edit: 'Editar',
-        delete: 'Eliminar',
-        modifyAll: 'Modificar Todo'
-      };
-      
-      const objDiffs = [];
-      const objCoincidences = [];
-      
-      Object.keys(permLabels).forEach(perm => {
-        if (perms1[perm] === perms2[perm]) {
-          objCoincidences.push({
-            perm: permLabels[perm],
-            value: perms1[perm]
-          });
-        } else {
-          objDiffs.push({
-            perm: permLabels[perm],
-            ps1Value: perms1[perm],
-            ps2Value: perms2[perm]
-          });
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Similitud de Permission Sets</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-      });
-      
-      if (objDiffs.length > 0) {
-        diffs.push({
-          object: obj,
-          type: 'perm_diff',
-          differences: objDiffs,
-          coincidences: objCoincidences
-        });
-      } else {
-        coincidences.push({
-          object: obj,
-          permissions: objCoincidences
-        });
-      }
-    });
-    
-    return { coincidences, diffs };
-  };
-  
-  const { coincidences, diffs } = getComparison();
-  
-  return (
-    <div className="bg-gray-50 rounded-lg overflow-hidden">
-      <div 
-        className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors"
-        onClick={() => setExpanded(!expanded)}
-      >
-        <div className="flex items-center space-x-3">
-          <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-          <div>
-            <p className="font-medium text-gray-800">{ps2Name}</p>
-            <p className="text-sm text-gray-600">
-              {differences} diferencia{differences !== 1 ? 's' : ''} • {coincidences.length} objeto{coincidences.length !== 1 ? 's' : ''} idéntico{coincidences.length !== 1 ? 's' : ''} • {diffs.filter(d => d.type === 'perm_diff').length} objeto{diffs.filter(d => d.type === 'perm_diff').length !== 1 ? 's' : ''} con diferencias
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #c7d2fe 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            color: #1f2937;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #6366f1;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            opacity: 0.4;
+        }
+
+        .upload-label {
+            color: #6366f1;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .upload-label:hover {
+            color: #4f46e5;
+        }
+
+        .upload-hint {
+            color: #9ca3af;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.4;
+            width: 20px;
+            height: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .results-count {
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .ps-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: box-shadow 0.3s;
+        }
+
+        .ps-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .ps-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ps-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .ps-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .badge {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .similar-card {
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .similar-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .similar-header:hover {
+            background: #f3f4f6;
+        }
+
+        .similar-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .check-icon {
+            color: #10b981;
+            width: 20px;
+            height: 20px;
+        }
+
+        .similar-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .similar-stats {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .similarity-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .similarity-bar {
+            width: 128px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .similarity-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .similarity-fill.high {
+            background: #10b981;
+        }
+
+        .similarity-fill.medium {
+            background: #fbbf24;
+        }
+
+        .similarity-fill.low {
+            background: #f97316;
+        }
+
+        .similarity-percent {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .chevron {
+            width: 20px;
+            height: 20px;
+            opacity: 0.4;
+            transition: transform 0.3s;
+        }
+
+        .chevron.expanded {
+            transform: rotate(180deg);
+        }
+
+        .similar-details {
+            padding: 0 1rem 1rem 1rem;
+            display: none;
+        }
+
+        .similar-details.show {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title.differences {
+            color: #dc2626;
+        }
+
+        .section-title.coincidences {
+            color: #059669;
+        }
+
+        .diff-card {
+            background: white;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .diff-object {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .diff-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+        }
+
+        .perm-diff {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            padding: 0.25rem 0;
+        }
+
+        .perm-label {
+            color: #4b5563;
+        }
+
+        .perm-comparison {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .perm-value {
+            font-size: 0.875rem;
+        }
+
+        .perm-value.yes {
+            color: #059669;
+        }
+
+        .perm-value.no {
+            color: #dc2626;
+        }
+
+        .coin-container {
+            background: white;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 0.75rem;
+        }
+
+        .coin-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .coin-tag {
+            background: #dcfce7;
+            color: #065f46;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: #6b7280;
+            margin-top: 1rem;
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #991b1b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Analizador de Similitud de Permission Sets</h1>
+            <p class="subtitle">
+                Identifica Permission Sets similares con 70% o más de coincidencia en permisos. 
+                Solo analiza Permission Sets con usuarios activos asignados.
             </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center">
-            <div className="w-32 bg-gray-200 rounded-full h-2">
-              <div
-                className={`h-2 rounded-full ${
-                  similarity >= 95
-                    ? 'bg-green-500'
-                    : similarity >= 85
-                    ? 'bg-yellow-500'
-                    : 'bg-orange-500'
-                }`}
-                style={{
-                  width: `${similarity}%`
-                }}
-              />
+
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <label class="upload-label" for="fileInput">
+                    Cargar archivo CSV
+                </label>
+                <input type="file" id="fileInput" accept=".csv" onchange="handleFileUpload(event)">
+                <p class="upload-hint">Exporta ObjectPermissions desde Salesforce</p>
             </div>
-            <span className="ml-3 text-sm font-medium text-gray-600">
-              {similarity}%
-            </span>
-          </div>
-          {expanded ? (
-            <ChevronUp className="h-5 w-5 text-gray-400" />
-          ) : (
-            <ChevronDown className="h-5 w-5 text-gray-400" />
-          )}
-        </div>
-      </div>
-      
-      {expanded && (
-        <div className="px-4 pb-4 space-y-4">
-          {diffs.length > 0 && (
-            <div>
-              <h4 className="text-sm font-semibold text-red-700 mb-2 flex items-center">
-                <AlertCircle className="h-4 w-4 mr-2" />
-                Diferencias ({diffs.length})
-              </h4>
-              <div className="space-y-2">
-                {diffs.map((diff, idx) => (
-                  <div key={idx} className="bg-white border border-red-200 rounded p-3">
-                    <p className="font-medium text-gray-800 mb-2">{diff.object}</p>
-                    
-                    {diff.type === 'only_ps1' && (
-                      <p className="text-sm text-red-600">{diff.message}</p>
-                    )}
-                    
-                    {diff.type === 'only_ps2' && (
-                      <p className="text-sm text-red-600">{diff.message}</p>
-                    )}
-                    
-                    {diff.type === 'perm_diff' && (
-                      <div className="space-y-1">
-                        {diff.differences.map((d, didx) => (
-                          <div key={didx} className="text-sm flex items-center justify-between">
-                            <span className="text-gray-700">{d.perm}:</span>
-                            <div className="flex items-center space-x-2">
-                              <span className={d.ps1Value ? 'text-green-600' : 'text-red-600'}>
-                                {ps1Name}: {d.ps1Value ? '✓' : '✗'}
-                              </span>
-                              <span className="text-gray-400">vs</span>
-                              <span className={d.ps2Value ? 'text-green-600' : 'text-red-600'}>
-                                {ps2Name}: {d.ps2Value ? '✓' : '✗'}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+
+            <div id="loadingDiv" class="loading hidden">
+                Procesando archivo...
             </div>
-          )}
-          
-          {coincidences.length > 0 && (
-            <div>
-              <h4 className="text-sm font-semibold text-green-700 mb-2 flex items-center">
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                Coincidencias Totales ({coincidences.length} objetos)
-              </h4>
-              <div className="bg-white border border-green-200 rounded p-3">
-                <div className="flex flex-wrap gap-2">
-                  {coincidences.map((coin, idx) => (
-                    <span 
-                      key={idx}
-                      className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm"
-                    >
-                      {coin.object}
-                    </span>
-                  ))}
+
+            <div id="errorDiv" class="error hidden"></div>
+        </div>
+
+        <div id="resultsCard" class="card hidden">
+            <div class="results-header">
+                <div>
+                    <h2 class="results-title">Resultados del Análisis</h2>
+                    <p class="results-count" id="resultsCount"></p>
                 </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const PermissionSetAnalyzer = () => {
-  const [data, setData] = useState(null);
-  const [analysis, setAnalysis] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    setLoading(true);
-    setError(null);
-
-    Papa.parse(file, {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        try {
-          processData(results.data);
-          setLoading(false);
-        } catch (err) {
-          setError('Error al procesar el archivo: ' + err.message);
-          setLoading(false);
-        }
-      },
-      error: (err) => {
-        setError('Error al leer el archivo: ' + err.message);
-        setLoading(false);
-      }
-    });
-  };
-
-  const processData = (rawData) => {
-    const permissionSets = {};
-    const psStats = {};
-    
-    rawData.forEach(row => {
-      const psName = row['Parent.Label'] || row['Parent.Name'];
-      const psId = row['ParentId'];
-      const asignadoActivos = parseInt(row['Asignado Activos']) || 0;
-      
-      if (!psName || !psId) return;
-      
-      if (!psStats[psId]) {
-        psStats[psId] = {
-          name: psName,
-          totalActivos: 0
-        };
-      }
-      
-      if (asignadoActivos > 0) {
-        psStats[psId].totalActivos = Math.max(psStats[psId].totalActivos, asignadoActivos);
-      }
-      
-      if (!permissionSets[psId]) {
-        permissionSets[psId] = {
-          name: psName,
-          id: psId,
-          objects: {}
-        };
-      }
-      
-      const sobject = row['SobjectType'];
-      if (sobject) {
-        permissionSets[psId].objects[sobject] = {
-          create: row['PermissionsCreate'] === true || row['PermissionsCreate'] === 'true',
-          read: row['PermissionsRead'] === true || row['PermissionsRead'] === 'true',
-          edit: row['PermissionsEdit'] === true || row['PermissionsEdit'] === 'true',
-          delete: row['PermissionsDelete'] === true || row['PermissionsDelete'] === 'true',
-          modifyAll: row['PermissionsModifyAllRecords'] === true || row['PermissionsModifyAllRecords'] === 'true'
-        };
-      }
-    });
-
-    const filteredPermissionSets = {};
-    Object.keys(permissionSets).forEach(psId => {
-      if (psStats[psId] && psStats[psId].totalActivos > 0) {
-        filteredPermissionSets[psId] = {
-          ...permissionSets[psId],
-          activeUsers: psStats[psId].totalActivos
-        };
-      }
-    });
-
-    setData(filteredPermissionSets);
-    analyzeSimilarity(filteredPermissionSets);
-  };
-
-  const analyzeSimilarity = (permissionSets) => {
-    const psArray = Object.values(permissionSets);
-    const similarities = [];
-
-    for (let i = 0; i < psArray.length; i++) {
-      const ps1 = psArray[i];
-      const similar = [];
-
-      for (let j = 0; j < psArray.length; j++) {
-        if (i === j) continue;
-        
-        const ps2 = psArray[j];
-        const comparison = comparePermissionSets(ps1, ps2);
-        
-        if (comparison.similarity >= 70 && comparison.commonObjects > 0) {
-          similar.push({
-            name: ps2.name,
-            id: ps2.id,
-            differences: comparison.differences,
-            details: comparison.details,
-            commonObjects: comparison.commonObjects,
-            similarity: comparison.similarity
-          });
-        }
-      }
-
-      if (similar.length > 0) {
-        similarities.push({
-          permissionSet: ps1.name,
-          id: ps1.id,
-          objectCount: Object.keys(ps1.objects).length,
-          similarTo: similar.sort((a, b) => b.similarity - a.similarity)
-        });
-      }
-    }
-
-    setAnalysis(similarities);
-  };
-
-  const comparePermissionSets = (ps1, ps2) => {
-    const objects1 = Object.keys(ps1.objects);
-    const objects2 = Object.keys(ps2.objects);
-    const commonObjects = objects1.filter(obj => objects2.includes(obj));
-    
-    const maxObjectsForZeroCommon = 2;
-    
-    if (commonObjects.length === 0) {
-      if (objects1.length > maxObjectsForZeroCommon || objects2.length > maxObjectsForZeroCommon) {
-        return { differences: 999, details: [], commonObjects: 0, totalPermissions: 0, similarity: 0 };
-      }
-    }
-    
-    const allObjects = new Set([...objects1, ...objects2]);
-    let differences = 0;
-    let totalPermissions = 0;
-    const details = [];
-
-    allObjects.forEach(obj => {
-      const perms1 = ps1.objects[obj];
-      const perms2 = ps2.objects[obj];
-
-      if (!perms1 && perms2) {
-        differences += 5;
-        totalPermissions += 5;
-        details.push({
-          object: obj,
-          type: 'missing_in_ps1',
-          description: `${obj}: Solo en ${ps2.name}`
-        });
-        return;
-      }
-      
-      if (perms1 && !perms2) {
-        differences += 5;
-        totalPermissions += 5;
-        details.push({
-          object: obj,
-          type: 'missing_in_ps2',
-          description: `${obj}: Solo en ${ps1.name}`
-        });
-        return;
-      }
-
-      const permissions = ['create', 'read', 'edit', 'delete', 'modifyAll'];
-      totalPermissions += permissions.length;
-      
-      permissions.forEach(perm => {
-        if (perms1[perm] !== perms2[perm]) {
-          differences++;
-        }
-      });
-    });
-
-    const similarity = totalPermissions > 0 
-      ? Math.round(((totalPermissions - differences) / totalPermissions) * 100) 
-      : 0;
-
-    return { differences, details, commonObjects: commonObjects.length, totalPermissions, similarity };
-  };
-
-  const filteredAnalysis = analysis?.filter(item =>
-    item.permissionSet.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Analizador de Similitud de Permission Sets
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Identifica Permission Sets similares con 70% o más de coincidencia en permisos. Solo analiza Permission Sets con usuarios activos asignados.
-          </p>
-
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-400 transition-colors">
-            <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <label className="cursor-pointer">
-              <span className="text-indigo-600 hover:text-indigo-700 font-semibold">
-                Cargar archivo CSV
-              </span>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-            </label>
-            <p className="text-sm text-gray-500 mt-2">
-              Exporta ObjectPermissions desde Salesforce
-            </p>
-          </div>
-
-          {loading && (
-            <div className="mt-4 text-center text-gray-600">
-              Procesando archivo...
-            </div>
-          )}
-
-          {error && (
-            <Alert className="mt-4 bg-red-50 border-red-200">
-              <AlertCircle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-red-800">
-                {error}
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
-
-        {analysis && (
-          <div className="bg-white rounded-lg shadow-xl p-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">
-                  Resultados del Análisis
-                </h2>
-                <p className="text-gray-600 mt-1">
-                  {analysis.length} Permission Sets con similitudes encontradas
-                </p>
-              </div>
-              
-              <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input
-                  type="text"
-                  placeholder="Buscar Permission Set..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              {filteredAnalysis?.map((item, idx) => (
-                <div key={idx} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-800">
-                        {item.permissionSet}
-                      </h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {item.objectCount} objetos con permisos • {data[item.id].activeUsers} usuario{data[item.id].activeUsers !== 1 ? 's' : ''} activo{data[item.id].activeUsers !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
-                      {item.similarTo.length} similares
-                    </span>
-                  </div>
-
-                  <div className="space-y-3">
-                    {item.similarTo.map((similar, sidx) => (
-                      <SimilarPermissionSetCard
-                        key={sidx}
-                        ps1Name={item.permissionSet}
-                        ps1Objects={data[item.id].objects}
-                        ps2Name={similar.name}
-                        ps2Objects={data[similar.id].objects}
-                        differences={similar.differences}
-                        similarity={similar.similarity}
-                      />
-                    ))}
-                  </div>
+                <div class="search-box">
+                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Buscar Permission Set..." oninput="filterResults()">
                 </div>
-              ))}
             </div>
 
-            {filteredAnalysis?.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
+            <div id="resultsList"></div>
+            <div id="emptyState" class="empty-state hidden">
                 No se encontraron Permission Sets que coincidan con la búsqueda
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+        </div>
     </div>
-  );
-};
 
-export default PermissionSetAnalyzer;
+    <script>
+        let globalData = null;
+        let globalAnalysis = null;
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('loadingDiv').classList.remove('hidden');
+            document.getElementById('errorDiv').classList.add('hidden');
+            document.getElementById('resultsCard').classList.add('hidden');
+
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    try {
+                        processData(results.data);
+                        document.getElementById('loadingDiv').classList.add('hidden');
+                    } catch (err) {
+                        showError('Error al procesar el archivo: ' + err.message);
+                        document.getElementById('loadingDiv').classList.add('hidden');
+                    }
+                },
+                error: (err) => {
+                    showError('Error al leer el archivo: ' + err.message);
+                    document.getElementById('loadingDiv').classList.add('hidden');
+                }
+            });
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorDiv');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function processData(rawData) {
+            const permissionSets = {};
+            const psStats = {};
+
+            rawData.forEach(row => {
+                const psName = row['Parent.Label'] || row['Parent.Name'];
+                const psId = row['ParentId'];
+                const asignadoActivos = parseInt(row['Asignado Activos']) || 0;
+
+                if (!psName || !psId) return;
+
+                if (!psStats[psId]) {
+                    psStats[psId] = {
+                        name: psName,
+                        totalActivos: 0
+                    };
+                }
+
+                if (asignadoActivos > 0) {
+                    psStats[psId].totalActivos = Math.max(psStats[psId].totalActivos, asignadoActivos);
+                }
+
+                if (!permissionSets[psId]) {
+                    permissionSets[psId] = {
+                        name: psName,
+                        id: psId,
+                        objects: {}
+                    };
+                }
+
+                const sobject = row['SobjectType'];
+                if (sobject) {
+                    permissionSets[psId].objects[sobject] = {
+                        create: row['PermissionsCreate'] === true || row['PermissionsCreate'] === 'true',
+                        read: row['PermissionsRead'] === true || row['PermissionsRead'] === 'true',
+                        edit: row['PermissionsEdit'] === true || row['PermissionsEdit'] === 'true',
+                        delete: row['PermissionsDelete'] === true || row['PermissionsDelete'] === 'true',
+                        modifyAll: row['PermissionsModifyAllRecords'] === true || row['PermissionsModifyAllRecords'] === 'true'
+                    };
+                }
+            });
+
+            const filteredPermissionSets = {};
+            Object.keys(permissionSets).forEach(psId => {
+                if (psStats[psId] && psStats[psId].totalActivos > 0) {
+                    filteredPermissionSets[psId] = {
+                        ...permissionSets[psId],
+                        activeUsers: psStats[psId].totalActivos
+                    };
+                }
+            });
+
+            globalData = filteredPermissionSets;
+            analyzeSimilarity(filteredPermissionSets);
+        }
+
+        function analyzeSimilarity(permissionSets) {
+            const psArray = Object.values(permissionSets);
+            const similarities = [];
+
+            for (let i = 0; i < psArray.length; i++) {
+                const ps1 = psArray[i];
+                const similar = [];
+
+                for (let j = 0; j < psArray.length; j++) {
+                    if (i === j) continue;
+
+                    const ps2 = psArray[j];
+                    const comparison = comparePermissionSets(ps1, ps2);
+
+                    if (comparison.similarity >= 70 && comparison.commonObjects > 0) {
+                        similar.push({
+                            name: ps2.name,
+                            id: ps2.id,
+                            differences: comparison.differences,
+                            commonObjects: comparison.commonObjects,
+                            similarity: comparison.similarity
+                        });
+                    }
+                }
+
+                if (similar.length > 0) {
+                    similarities.push({
+                        permissionSet: ps1.name,
+                        id: ps1.id,
+                        objectCount: Object.keys(ps1.objects).length,
+                        similarTo: similar.sort((a, b) => b.similarity - a.similarity)
+                    });
+                }
+            }
+
+            globalAnalysis = similarities;
+            displayResults();
+        }
+
+        function comparePermissionSets(ps1, ps2) {
+            const objects1 = Object.keys(ps1.objects);
+            const objects2 = Object.keys(ps2.objects);
+            const commonObjects = objects1.filter(obj => objects2.includes(obj));
+
+            if (commonObjects.length === 0) {
+                if (objects1.length > 2 || objects2.length > 2) {
+                    return { differences: 999, commonObjects: 0, totalPermissions: 0, similarity: 0 };
+                }
+            }
+
+            const allObjects = new Set([...objects1, ...objects2]);
+            let differences = 0;
+            let totalPermissions = 0;
+
+            allObjects.forEach(obj => {
+                const perms1 = ps1.objects[obj];
+                const perms2 = ps2.objects[obj];
+
+                if (!perms1 || !perms2) {
+                    differences += 5;
+                    totalPermissions += 5;
+                    return;
+                }
+
+                const permissions = ['create', 'read', 'edit', 'delete', 'modifyAll'];
+                totalPermissions += permissions.length;
+
+                permissions.forEach(perm => {
+                    if (perms1[perm] !== perms2[perm]) {
+                        differences++;
+                    }
+                });
+            });
+
+            const similarity = totalPermissions > 0 
+                ? Math.round(((totalPermissions - differences) / totalPermissions) * 100) 
+                : 0;
+
+            return { differences, commonObjects: commonObjects.length, totalPermissions, similarity };
+        }
+
+        function displayResults() {
+            document.getElementById('resultsCard').classList.remove('hidden');
+            document.getElementById('resultsCount').textContent = 
+                `${globalAnalysis.length} Permission Sets con similitudes encontradas`;
+            
+            renderResultsList(globalAnalysis);
+        }
+
+        function renderResultsList(analysis) {
+            const resultsList = document.getElementById('resultsList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (!analysis || analysis.length === 0) {
+                resultsList.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            resultsList.innerHTML = analysis.map((item, idx) => `
+                <div class="ps-card">
+                    <div class="ps-header">
+                        <div>
+                            <h3 class="ps-title">${item.permissionSet}</h3>
+                            <p class="ps-info">
+                                ${item.objectCount} objetos con permisos • 
+                                ${globalData[item.id].activeUsers} usuario${globalData[item.id].activeUsers !== 1 ? 's' : ''} activo${globalData[item.id].activeUsers !== 1 ? 's' : ''}
+                            </p>
+                        </div>
+                        <span class="badge">${item.similarTo.length} similares</span>
+                    </div>
+                    ${item.similarTo.map((similar, sidx) => renderSimilarCard(item, similar, idx, sidx)).join('')}
+                </div>
+            `).join('');
+        }
+
+        function renderSimilarCard(item, similar, psIdx, simIdx) {
+            const cardId = `similar-${psIdx}-${simIdx}`;
+            const comparison = getComparison(
+                globalData[item.id].objects,
+                globalData[similar.id].objects,
+                item.permissionSet,
+                similar.name
+            );
+
+            const fillClass = similar.similarity >= 95 ? 'high' : 
+                            similar.similarity >= 85 ? 'medium' : 'low';
+
+            return `
+                <div class="similar-card">
+                    <div class="similar-header" onclick="toggleDetails('${cardId}')">
+                        <div class="similar-info">
+                            <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <div>
+                                <div class="similar-name">${similar.name}</div>
+                                <div class="similar-stats">
+                                    ${similar.differences} diferencia${similar.differences !== 1 ? 's' : ''} • 
+                                    ${comparison.coincidences.length} objeto${comparison.coincidences.length !== 1 ? 's' : ''} idéntico${comparison.coincidences.length !== 1 ? 's' : ''} • 
+                                    ${comparison.diffs.filter(d => d.type === 'perm_diff').length} objeto${comparison.diffs.filter(d => d.type === 'perm_diff').length !== 1 ? 's' : ''} con diferencias
+                                </div>
+                            </div>
+                        </div>
+                        <div class="similarity-bar-container">
+                            <div class="similarity-bar">
+                                <div class="similarity-fill ${fillClass}" style="width: ${similar.similarity}%"></div>
+                            </div>
+                            <span class="similarity-percent">${similar.similarity}%</span>
+                            <svg class="chevron" id="chevron-${cardId}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="similar-details" id="details-${cardId}">
+                        ${comparison.diffs.length > 0 ? renderDifferences(comparison.diffs, item.permissionSet, similar.name) : ''}
+                        ${comparison.coincidences.length > 0 ? renderCoincidences(comparison.coincidences) : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getComparison(ps1Objects, ps2Objects, ps1Name, ps2Name) {
+            const allObjects = new Set([...Object.keys(ps1Objects), ...Object.keys(ps2Objects)]);
+            const coincidences = [];
+            const diffs = [];
+
+            allObjects.forEach(obj => {
+                const perms1 = ps1Objects[obj];
+                const perms2 = ps2Objects[obj];
+
+                if (!perms1) {
+                    diffs.push({ object: obj, type: 'only_ps2', message: `Solo en ${ps2Name}` });
+                    return;
+                }
+
+                if (!perms2) {
+                    diffs.push({ object: obj, type: 'only_ps1', message: `Solo en ${ps1Name}` });
+                    return;
+                }
+
+                const permLabels = {
+                    create: 'Crear',
+                    read: 'Leer',
+                    edit: 'Editar',
+                    delete: 'Eliminar',
+                    modifyAll: 'Modificar Todo'
+                };
+
+                const objDiffs = [];
+                const objCoincidences = [];
+
+                Object.keys(permLabels).forEach(perm => {
+                    if (perms1[perm] === perms2[perm]) {
+                        objCoincidences.push({ perm: permLabels[perm], value: perms1[perm] });
+                    } else {
+                        objDiffs.push({
+                            perm: permLabels[perm],
+                            ps1Value: perms1[perm],
+                            ps2Value: perms2[perm],
+                            ps1Name,
+                            ps2Name
+                        });
+                    }
+                });
+
+                if (objDiffs.length > 0) {
+                    diffs.push({ object: obj, type: 'perm_diff', differences: objDiffs });
+                } else {
+                    coincidences.push({ object: obj });
+                }
+            });
+
+            return { coincidences, diffs };
+        }
+
+        function renderDifferences(diffs, ps1Name, ps2Name) {
+            return `
+                <div class="section">
+                    <div class="section-title differences">
+                        <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Diferencias (${diffs.length})
+                    </div>
+                    ${diffs.map(diff => `
+                        <div class="diff-card">
+                            <div class="diff-object">${diff.object}</div>
+                            ${diff.type === 'only_ps1' || diff.type === 'only_ps2' ? 
+                                `<div class="diff-message">${diff.message}</div>` : ''}
+                            ${diff.type === 'perm_diff' ? diff.differences.map(d => `
+                                <div class="perm-diff">
+                                    <span class="perm-label">${d.perm}:</span>
+                                    <div class="perm-comparison">
+                                        <span class="perm-value ${d.ps1Value ? 'yes' : 'no'}">
+                                            ${d.ps1Name}: ${d.ps1Value ? '✓' : '✗'}
+                                        </span>
+                                        <span style="color:#9ca3af">vs</span>
+                                        <span class="perm-value ${d.ps2Value ? 'yes' : 'no'}">
+                                            ${d.ps2Name}: ${d.ps2Value ? '✓' : '✗'}
+                                        </span>
+                                    </div>
+                                </div>
+                            `).join('') : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderCoincidences(coincidences) {
+            return `
+                <div class="section">
+                    <div class="section-title coincidences">
+                        <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Coincidencias Totales (${coincidences.length} objetos)
+                    </div>
+                    <div class="coin-container">
+                        <div class="coin-tags">
+                            ${coincidences.map(coin => `
+                                <span class="coin-tag">${coin.object}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleDetails(cardId) {
+            const details = document.getElementById(`details-${cardId}`);
+            const chevron = document.getElementById(`chevron-${cardId}`);
+            
+            if (details.classList.contains('show')) {
+                details.classList.remove('show');
+                chevron.classList.remove('expanded');
+            } else {
+                details.classList.add('show');
+                chevron.classList.add('expanded');
+            }
+        }
+
+        function filterResults() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!globalAnalysis) return;
+
+            const filtered = globalAnalysis.filter(item =>
+                item.permissionSet.toLowerCase().includes(searchTerm)
+            );
+
+            renderResultsList(filtered);
+        }
+    </script>
+</body>
+</html>

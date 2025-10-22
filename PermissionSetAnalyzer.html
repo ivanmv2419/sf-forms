@@ -669,7 +669,7 @@
                             <div>
                                 <div class="similar-name">${similar.name}</div>
                                 <div class="similar-stats">
-                                    ${similar.differences} diferencia${similar.differences !== 1 ? 's' : ''} • 
+                                    ${comparison.totalDifferences} diferencia${comparison.totalDifferences !== 1 ? 's' : ''} • 
                                     ${comparison.coincidences.length} objeto${comparison.coincidences.length !== 1 ? 's' : ''} idéntico${comparison.coincidences.length !== 1 ? 's' : ''} • 
                                     ${comparison.diffs.filter(d => d.type === 'perm_diff').length} objeto${comparison.diffs.filter(d => d.type === 'perm_diff').length !== 1 ? 's' : ''} con diferencias
                                 </div>
@@ -697,18 +697,21 @@
             const allObjects = new Set([...Object.keys(ps1Objects), ...Object.keys(ps2Objects)]);
             const coincidences = [];
             const diffs = [];
+            let totalDifferences = 0;
 
             allObjects.forEach(obj => {
                 const perms1 = ps1Objects[obj];
                 const perms2 = ps2Objects[obj];
 
                 if (!perms1) {
-                    diffs.push({ object: obj, type: 'only_ps2', message: `Solo en ${ps2Name}` });
+                    diffs.push({ object: obj, type: 'only_ps2', message: `Solo en ${ps2Name}`, diffCount: 5 });
+                    totalDifferences += 5;
                     return;
                 }
 
                 if (!perms2) {
-                    diffs.push({ object: obj, type: 'only_ps1', message: `Solo en ${ps1Name}` });
+                    diffs.push({ object: obj, type: 'only_ps1', message: `Solo en ${ps1Name}`, diffCount: 5 });
+                    totalDifferences += 5;
                     return;
                 }
 
@@ -722,6 +725,7 @@
 
                 const objDiffs = [];
                 const objCoincidences = [];
+                let objDiffCount = 0;
 
                 Object.keys(permLabels).forEach(perm => {
                     if (perms1[perm] === perms2[perm]) {
@@ -734,17 +738,19 @@
                             ps1Name,
                             ps2Name
                         });
+                        objDiffCount++;
                     }
                 });
 
                 if (objDiffs.length > 0) {
-                    diffs.push({ object: obj, type: 'perm_diff', differences: objDiffs });
+                    diffs.push({ object: obj, type: 'perm_diff', differences: objDiffs, diffCount: objDiffCount });
+                    totalDifferences += objDiffCount;
                 } else {
                     coincidences.push({ object: obj });
                 }
             });
 
-            return { coincidences, diffs };
+            return { coincidences, diffs, totalDifferences };
         }
 
         function renderDifferences(diffs, ps1Name, ps2Name) {

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gracias por contactarnos - CrossMotion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            font-size: 14px;
+            color: #004193;
+            background-color: #004193;
+            line-height: 1.7em;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            background-color: #004193;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 220px;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #004193;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .highlight {
+            color: #004193;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background-color: #efefef;
+            padding: 25px;
+            border-radius: 5px;
+            margin: 30px 0;
+        }
+
+        .info-box p {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-container {
+            margin-top: 40px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background-color: #004193;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #003170;
+        }
+
+        .footer-note {
+            font-size: 13px;
+            color: #777;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 40px 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .icon {
+                font-size: 60px;
+            }
+
+            .logo {
+                max-width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://www.crossmotion.com.mx/wp-content/uploads/2023/06/Iconos-02-300x44.png" alt="CrossMotion Logo" class="logo">
+        </div>
+
+        <div class="content">
+            <div class="icon">✅</div>
+            
+            <h1>¡Gracias por contactarnos!</h1>
+            
+            <p class="message">
+                Hemos recibido tu solicitud exitosamente.
+            </p>
+
+            <div class="info-box">
+                <p><strong>¿Qué sigue?</strong></p>
+                <p>Nuestro equipo revisará tu solicitud y se pondrá en contacto contigo en las próximas <span class="highlight">24-48 horas hábiles</span>.</p>
+                <p>Recibirás un correo de confirmación en breve.</p>
+            </div>
+
+            <p class="message">
+                Si tienes alguna pregunta urgente, no dudes en contactarnos directamente.
+            </p>
+
+            <div class="btn-container">
+                <a href="webToLeadChatWeb.html" class="btn">Volver al sitio</a>
+            </div>
+
+            <p class="footer-note">
+                let's get there together
+            </p>
+        </div>
+    </div>
+</body>
+</html>

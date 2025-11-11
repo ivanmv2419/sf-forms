@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotiza Ahora - CrossMotion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            font-size: 14px;
+            color: #004193;
+            background-color: #004193;
+            line-height: 1.7em;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #efefef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #004193;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 220px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .form-content {
+            padding: 40px 30px;
+        }
+
+        .form-wrapper {
+            background: white;
+            padding: 35px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #004193;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Open Sans', Arial, sans-serif;
+            transition: border-color 0.3s;
+            background-color: white;
+            color: #333;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #004193;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        ::placeholder {
+            color: #999;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #004193;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Open Sans', Arial, sans-serif;
+        }
+
+        .submit-btn:hover {
+            background-color: #003170;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .form-content {
+                padding: 30px 20px;
+            }
+
+            .form-wrapper {
+                padding: 25px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .logo {
+                max-width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://www.crossmotion.com.mx/wp-content/uploads/2023/06/Iconos-02-300x44.png" alt="CrossMotion Logo" class="logo">
+            <h1>Cotiza ahora</h1>
+        </div>
+
+        <div class="form-content">
+            <div class="form-wrapper">
+                <form action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DHr000002fSk8" method="POST">
+                    
+                    <!-- Campos ocultos -->
+                    <input type="hidden" name="oid" value="00DHr000002fSk8">
+                    <input type="hidden" name="retURL" value="https://www.crossmotion.com.mx/">
+                    <input type="hidden" name="lead_source" value="Web">
+
+                    <div class="form-group">
+                        <label for="first_name">Nombre <span class="required">*</span></label>
+                        <input id="first_name" maxlength="40" name="first_name" type="text" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">Apellidos <span class="required">*</span></label>
+                        <input id="last_name" maxlength="80" name="last_name" type="text" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">Empresa <span class="required">*</span></label>
+                        <input id="company" maxlength="40" name="company" type="text" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Correo electrónico <span class="required">*</span></label>
+                        <input id="email" maxlength="80" name="email" type="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Teléfono <span class="required">*</span></label>
+                        <input id="phone" maxlength="40" name="phone" type="tel" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">¿Qué tipo de servicio necesitas?</label>
+                        <textarea id="description" name="description" placeholder="Cuéntanos sobre tus necesidades..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00DHr000002fSk8',
+				'Mensajer_a_Demo_2025',
+				'https://nuvolar9-dev-ed.develop.my.site.com/ESWMensajeraDemo20251762877235762',
+				{
+					scrt2URL: 'https://nuvolar9-dev-ed.develop.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://nuvolar9-dev-ed.develop.my.site.com/ESWMensajeraDemo20251762877235762/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+</body>
+</html>

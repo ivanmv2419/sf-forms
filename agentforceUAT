@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAT Agentforce - Brother México</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #0d2ea0 0%, #1a4fd8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #0d2ea0;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .link-box {
+            background: #f8f9fa;
+            border-left: 4px solid #0d2ea0;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+        
+        .link-box a {
+            color: #0d2ea0;
+            text-decoration: none;
+            font-weight: 600;
+            word-break: break-all;
+        }
+        
+        .link-box a:hover {
+            text-decoration: underline;
+        }
+        
+        h2 {
+            color: #0d2ea0;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #0d2ea0;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #1a4fd8;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+        
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .important {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #0d2ea0;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .channel-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #e9ecef;
+        }
+        
+        .channel-card h4 {
+            color: #0d2ea0;
+            margin-bottom: 10px;
+        }
+        
+        .status-options {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        .status-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .status-ok {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-not-ok {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-obs {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .models-list {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .models-list code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin: 3px;
+            display: inline-block;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Pruebas UAT - Agentforce</h1>
+        </header>
+        
+        <div class="content">
+            <div class="link-box">
+                <strong>Matriz de Pruebas:</strong> 
+                <a href="https://docs.google.com/spreadsheets/d/1V2YkH9TPZGssuKfTGu0-w1nyfAco7UMf-AQUCRL44Jw/edit?usp=sharing" target="_blank">
+                    Acceder al Google Sheets
+                </a>
+            </div>
+
+            <h2>1. Consideraciones Generales</h2>
+            <ul>
+                <li>Estas pruebas deben ejecutarse <strong>como si fueras un cliente real</strong>, escribiendo de forma natural.</li>
+                <li>El objetivo es validar si la experiencia y el resultado son los esperados, no evaluar aspectos técnicos.</li>
+            </ul>
+
+            <h2>2. Canales Disponibles para Pruebas</h2>
+            
+            <div class="channel-card">
+                <h4>WhatsApp</h4>
+                <p><strong>Número habilitado:</strong> <code>56 5785 5508</code></p>
+                <p><em>Este número es temporal y exclusivo para UAT.</em></p>
+                
+                <h4 style="margin-top: 15px;">Reiniciar conversación en WhatsApp:</h4>
+                <ol>
+                    <li>Escribe la palabra <strong>"stop"</strong></li>
+                    <li>Espera la confirmación</li>
+                    <li>Inicia nuevamente la conversación</li>
+                </ol>
+                <p><em>Esto permite ejecutar varios casos con el mismo número.</em></p>
+            </div>
+
+            <div class="channel-card">
+                <h4>Chat Web</h4>
+                <p>Accede al chat web habilitado para pruebas <strong>(En la burbuja inferior derecha)</strong>.</p>
+                
+                <h4 style="margin-top: 15px;">Reiniciar conversación en Chat Web:</h4>
+                <ol>
+                    <li>Da clic en "Finalizar conversación"</li>
+                    <li>Recarga la página</li>
+                    <li>Inicia una nueva conversación</li>
+                </ol>
+            </div>
+
+            <h2>3. Modelos para Pruebas de Recomendación y Consultas</h2>
+            <p>Los siguientes modelos <strong>SÍ existen</strong> en la plataforma, pero <strong>NO cuentan con resoluciones documentadas</strong>:</p>
+            
+            <div class="models-list">
+                <code>SH7700</code>
+                <code>SDX225</code>
+                <code>SE425</code>
+                <code>QL800</code>
+                <code>SP1MX</code>
+                <code>DCPT510W</code>
+                <code>MFCL3710CW</code>
+                <code>DCPL2551DW</code>
+                <code>DS640</code>
+                <code>PTP950NW</code>
+                <code>HLL9310CDW</code>
+                <code>HL1112</code>
+                <code>SC2000USB</code>
+                <code>TN310BK</code>
+                <code>TN330</code>
+                <code>TZ231</code>
+                <code>LC61BK</code>
+                <code>1430I</code>
+                <code>GT361</code>
+            </div>
+
+            <h2>4. Modelos con Problemática y Solución Documentada</h2>
+            <p>Los siguientes modelos <strong>SÍ cuentan con resoluciones documentadas</strong>:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Modelo</th>
+                        <th>Tipo de problemática</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>DCPT220</td><td>Descarga de controladores</td></tr>
+                    <tr><td>DCPT420W</td><td>Descarga de controladores</td></tr>
+                    <tr><td>DCPT520W</td><td>Descarga de controladores</td></tr>
+                    <tr><td>DCPT720DW</td><td>Descarga de controladores</td></tr>
+                    <tr><td>MFCT920DW</td><td>Descarga de controladores</td></tr>
+                    <tr><td>DCPT530DW</td><td>Cómo instalar</td></tr>
+                    <tr><td>DCPT536DW</td><td>Cómo instalar</td></tr>
+                    <tr><td>DCPT830DW</td><td>Cómo instalar o proceso de purga</td></tr>
+                    <tr><td>MFCT930DW</td><td>Cómo instalar o proceso de purga</td></tr>
+                    <tr><td>DCPT230</td><td>Cómo inicializar modelos LED o proceso de purga</td></tr>
+                    <tr><td>DCPT236</td><td>Cómo inicializar modelos LED</td></tr>
+                    <tr><td>DCPT730DW</td><td>Proceso de purga</td></tr>
+                </tbody>
+            </table>
+
+            <h2>5. Pruebas con Otros Modelos</h2>
+            <ul>
+                <li>Puedes preguntar por otros modelos distintos a los listados.</li>
+                <li>Si el modelo no tiene documentación de soporte, el agente:
+                    <ul>
+                        <li>No podrá dar una solución técnica</li>
+                        <li>Creará un caso de soporte conforme al comportamiento esperado</li>
+                    </ul>
+                </li>
+                <li><em>Esto también forma parte de las pruebas.</em></li>
+            </ul>
+
+            <h2>6. Registro de Resultados</h2>
+            <p>Al finalizar cada caso de prueba, por favor llena las siguientes columnas en el archivo de UAT:</p>
+            <ul>
+                <li><strong>Resultado obtenido:</strong> Describe brevemente qué ocurrió</li>
+                <li><strong>Estado:</strong>
+                    <div class="status-options">
+                        <span class="status-badge status-ok">OK</span>
+                        <span class="status-badge status-not-ok">No OK</span>
+                        <span class="status-badge status-obs">OK con observaciones</span>
+                    </div>
+                </li>
+                <li><strong>Comentarios:</strong> Solo si algo no funcionó como esperabas</li>
+            </ul>
+            <p><em>No es necesario adjuntar evidencia si el resultado es OK.</em></p>
+
+            <div class="important">
+                <h3>Importante</h3>
+                <ul>
+                    <li>No todos los casos crean un caso en el sistema.</li>
+                    <li>En algunos escenarios, los casos se crean solo con fines informativos y pueden no mostrarse al usuario.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Script de Agentforce -->
+    <script type='text/javascript'>
+        function initEmbeddedMessaging() {
+            try {
+                embeddedservice_bootstrap.settings.language = 'es';
+                embeddedservice_bootstrap.init(
+                    '00DcX000004FAmL',
+                    'Agentforce_Chat_Web',
+                    'https://brothermexico--bsandboxpr.sandbox.my.site.com/ESWAgentforceChatWeb1768989689937',
+                    {
+                        scrt2URL: 'https://brothermexico--bsandboxpr.sandbox.my.salesforce-scrt.com'
+                    }
+                );
+            } catch (err) {
+                console.error('Error loading Embedded Messaging: ', err);
+            }
+        };
+    </script>
+    <script type='text/javascript' src='https://brothermexico--bsandboxpr.sandbox.my.site.com/ESWAgentforceChatWeb1768989689937/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+</body>
+</html>

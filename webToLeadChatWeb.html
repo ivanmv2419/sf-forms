@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotiza Ahora - CrossMotion</title>
+    <title>Cotiza Ahora - Nuvolar</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -15,8 +15,8 @@
         body {
             font-family: 'Open Sans', Arial, sans-serif;
             font-size: 14px;
-            color: #004193;
-            background-color: #004193;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #0066cc 0%, #004999 100%);
             line-height: 1.7em;
             font-weight: 500;
             -webkit-font-smoothing: antialiased;
@@ -28,27 +28,30 @@
         .container {
             max-width: 700px;
             margin: 0 auto;
-            background: #efefef;
-            border-radius: 8px;
+            background: #f5f5f5;
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         }
 
         .header {
-            background-color: #004193;
-            padding: 40px 30px;
+            background: linear-gradient(135deg, #0066cc 0%, #004999 100%);
+            padding: 50px 30px;
             text-align: center;
         }
 
         .logo {
-            max-width: 220px;
-            margin-bottom: 20px;
+            max-width: 200px;
+            margin-bottom: 25px;
+            filter: brightness(0) invert(1);
         }
 
         .header h1 {
             color: white;
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 600;
             margin: 0;
+            letter-spacing: -0.5px;
         }
 
         .form-content {
@@ -57,8 +60,9 @@
 
         .form-wrapper {
             background: white;
-            padding: 35px;
-            border-radius: 5px;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .form-group {
@@ -67,7 +71,7 @@
 
         label {
             display: block;
-            color: #004193;
+            color: #1a1a1a;
             font-weight: 600;
             margin-bottom: 8px;
             font-size: 14px;
@@ -78,12 +82,12 @@
         input[type="tel"],
         textarea {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
             font-size: 14px;
             font-family: 'Open Sans', Arial, sans-serif;
-            transition: border-color 0.3s;
+            transition: all 0.3s ease;
             background-color: white;
             color: #333;
         }
@@ -93,7 +97,8 @@
         input[type="tel"]:focus,
         textarea:focus {
             outline: none;
-            border-color: #004193;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
         }
 
         textarea {
@@ -107,26 +112,32 @@
 
         .submit-btn {
             width: 100%;
-            padding: 15px;
-            background-color: #004193;
+            padding: 16px;
+            background: linear-gradient(135deg, #0066cc 0%, #004999 100%);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-family: 'Open Sans', Arial, sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
         }
 
         .submit-btn:hover {
-            background-color: #003170;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
         }
 
         .required {
-            color: #e74c3c;
+            color: #ff4444;
         }
 
         @media (max-width: 768px) {
@@ -139,19 +150,19 @@
             }
 
             .form-wrapper {
-                padding: 25px;
+                padding: 30px 25px;
             }
 
             .header {
-                padding: 30px 20px;
+                padding: 40px 20px;
             }
 
             .header h1 {
-                font-size: 26px;
+                font-size: 28px;
             }
 
             .logo {
-                max-width: 180px;
+                max-width: 170px;
             }
         }
     </style>
@@ -159,7 +170,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://www.crossmotion.com.mx/wp-content/uploads/2023/06/Iconos-02-300x44.png" alt="CrossMotion Logo" class="logo">
+            <img src="https://nuvolar.com/wp-content/uploads/2021/10/logo.svg" alt="Nuvolar Logo" class="logo">
             <h1>Cotiza ahora</h1>
         </div>
 

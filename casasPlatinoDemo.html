@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contacto | Casas Platino</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #00cfb4;
+    --teal-dark: #00b89e;
+    --navy: #1e2a35;
+    --navy-light: #253340;
+    --bg: #f4f4f4;
+    --white: #ffffff;
+    --text: #1a1a1a;
+    --text-muted: #888;
+    --border: #ddd;
+    --red: #e53935;
+  }
+
+  html, body {
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text);
+  }
+
+  /* NAV */
+  nav {
+    background: var(--navy);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-logo { height: 38px; }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--teal); }
+
+  .nav-menu-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+  }
+  .nav-menu-icon span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+  }
+
+  /* FLOATING */
+  .floating-btns {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 200;
+  }
+  .float-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    text-decoration: none;
+  }
+  .float-btn:hover { background: var(--teal-dark); transform: scale(1.08); }
+  .float-btn svg { width: 20px; height: 20px; fill: white; }
+
+  /* HERO BAR */
+  .hero-bar {
+    background: var(--navy-light);
+    text-align: center;
+    padding: 52px 20px 48px;
+  }
+  .hero-bar h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  /* MAIN */
+  .main-content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* FORM CARD */
+  .form-card {
+    background: var(--white);
+    border-radius: 4px;
+    padding: 52px 56px 48px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+  }
+
+  .form-card-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .form-card-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: var(--teal);
+    margin: 10px auto 0;
+    border-radius: 2px;
+  }
+
+  /* FIELDS */
+  .form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .field { display: flex; flex-direction: column; }
+
+  .field label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .req { color: var(--red); margin-right: 3px; }
+
+  input[type="text"],
+  input[type="tel"],
+  select {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    padding: 13px 14px;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(0,207,180,0.13);
+  }
+
+  input::placeholder { color: #ccc; }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 44%;
+    transform: rotate(45deg);
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #aaa;
+    border-bottom: 2px solid #aaa;
+    pointer-events: none;
+  }
+
+  select option { background: white; color: var(--text); }
+
+  /* SUBMIT */
+  input[type="submit"] {
+    background: var(--text);
+    border: none;
+    border-radius: 3px;
+    color: white;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 16px;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.15s;
+    width: 100%;
+    margin-top: 6px;
+  }
+  input[type="submit"]:hover { background: #2c2c2c; transform: translateY(-1px); }
+
+  /* CONTACT BOXES */
+  .contact-boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    margin-top: 28px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .contact-box {
+    background: var(--white);
+    padding: 28px 32px;
+    text-align: center;
+  }
+
+  .contact-box p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .contact-box a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--teal);
+    color: white;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 13px 20px;
+    border-radius: 3px;
+    transition: background 0.2s;
+  }
+  .contact-box a:hover { background: var(--teal-dark); }
+  .contact-box a svg { width: 15px; height: 15px; fill: white; flex-shrink: 0; }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy);
+    margin-top: 60px;
+    padding: 48px 60px 28px;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .footer-logo { height: 40px; }
+
+  .footer-social {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .footer-social a {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .footer-social a:hover { background: var(--teal); }
+  .footer-social svg { width: 14px; height: 14px; fill: white; }
+
+  .footer-col h4 {
+    color: var(--teal);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul li a {
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: color 0.2s;
+  }
+  .footer-col ul li a:hover { color: var(--teal); }
+
+  .footer-bottom {
+    text-align: center;
+    padding-top: 24px;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.4);
+  }
+  .footer-bottom a { color: rgba(255,255,255,0.5); text-decoration: none; }
+  .footer-bottom a:hover { color: var(--teal); }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .nav-links { display: none; }
+    .form-card { padding: 36px 22px; }
+    .form-row { grid-template-columns: 1fr; }
+    .contact-boxes { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; gap: 32px; }
+    footer { padding: 40px 28px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- FLOATING BUTTONS -->
+<div class="floating-btns">
+  <a class="float-btn" href="tel:4427900034" title="Llamar">
+    <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+  </a>
+  <a class="float-btn" href="https://wa.me/524427900034" title="WhatsApp" target="_blank">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <img src="https://terrabmt.com/wp-content/uploads/2022/04/CasasPlatinoPositivo.png" alt="Casas Platino" class="nav-logo">
+  <ul class="nav-links">
+    <li><a href="#">Nosotros</a></li>
+    <li><a href="#">Desarrollos</a></li>
+    <li><a href="#">Ciudades</a></li>
+    <li><a href="#">Financiamiento</a></li>
+    <li><a href="#">Testimoniales</a></li>
+    <li><a href="#">Blog</a></li>
+    <li><a href="#">Contacto</a></li>
+  </ul>
+  <div class="nav-menu-icon">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO BAR -->
+<div class="hero-bar">
+  <h1>Contacto</h1>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+  <div class="form-card">
+    <div class="form-card-title">Estamos listos para ayudarte</div>
+
+    <form action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DTH000005msjh" method="POST">
+      <input type="hidden" name="oid" value="00DTH000005msjh">
+      <input type="hidden" name="retURL" value="https://ivanmv2419.github.io/sf-forms/">
+
+      <div class="form-grid">
+
+        <div class="form-row">
+          <div class="field">
+            <label for="first_name"><span class="req">*</span>Nombre</label>
+            <input id="first_name" maxlength="40" name="first_name" type="text" placeholder="María">
+          </div>
+          <div class="field">
+            <label for="last_name"><span class="req">*</span>Apellidos</label>
+            <input id="last_name" maxlength="80" name="last_name" type="text" placeholder="González López">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="email"><span class="req">*</span>Mail</label>
+            <input id="email" maxlength="80" name="email" type="text" placeholder="correo@ejemplo.com">
+          </div>
+	  <div class="field">
+  	    <label for="mobile">Mobile</label>
+            <input id="mobile" maxlength="40" name="mobile" type="tel" placeholder="+52 000 000 0000">
+          </div>
+        </div>
+	<div class="field">
+          <label for="00NHr00000iXgOL">Fraccionamiento de Interés</label>
+          <div class="select-wrap">
+            <select id="00NHr00000iXgOL" name="00NHr00000iXgOL" title="Fraccionamiento de Interés">
+              <option value="">Selecciona una opción</option>
+              <option value="Terranova">Terranova</option>
+              <option value="Las Colinas">Las Colinas</option>
+              <option value="Camacho 191">Camacho 191</option>
+              <option value="Torre Ocho">Torre Ocho</option>
+              <option value="Veracruz 46">Veracruz 46</option>
+              <option value="Valle Alegre La Vista">Valle Alegre La Vista</option>
+              <option value="Villas Fortin">Villas Fortin</option>
+              <option value="Residencial Santa Ana">Residencial Santa Ana</option>
+              <option value="Cabo Alto">Cabo Alto</option>
+              <option value="Gran Cabo">Gran Cabo</option>
+              <option value="Gran Valle">Gran Valle</option>
+              <option value="Privada Nevada">Privada Nevada</option>
+              <option value="Torre Albatros">Torre Albatros</option>
+              <option value="EDIF LAZARO CARDENAS">EDIF LAZARO CARDENAS</option>
+              <option value="PRIVADA OYAMEL">PRIVADA OYAMEL</option>
+              <option value="LIENZO DEL MAR">LIENZO DEL MAR</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="00NTH000006XEC2">Me interesa:</label>
+          <div class="select-wrap">
+            <select id="00NTH000006XEC2" name="00NTH000006XEC2" title="Tipo de interés">
+              <option value="">Selecciona una opción</option>
+              <option value="Casa">Casa</option>
+              <option value="Departamento">Departamento</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="00NHr00000iXgOQ">Plazo de compra:</label>
+          <div class="select-wrap">
+            <select id="00NHr00000iXgOQ" name="00NHr00000iXgOQ" title="Plazo de compra">
+              <option value="">Selecciona una opción</option>
+              <option value="Inmediato">Inmediato</option>
+              <option value="3 Meses">3 Meses</option>
+              <option value="6 Meses">6 Meses</option>
+              <option value="1 Año">1 Año</option>
+              <option value="> 1 Año">Más de 1 Año</option>
+            </select>
+          </div>
+        </div>
+
+        <input type="submit" value="Enviar">
+      </div>
+    </form>
+  </div>
+
+  <!-- CONTACT BOXES -->
+  <div class="contact-boxes">
+    <div class="contact-box">
+      <p>¿Tienes dudas? Llámanos</p>
+      <a href="tel:4427900034">
+        <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+        44 2790 0034
+      </a>
+    </div>
+    <div class="contact-box">
+      <p>¿Deseas información general?</p>
+      <a href="mailto:contacto@casasplatino.com">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        contacto@casasplatino.com
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <img src="https://terrabmt.com/wp-content/uploads/2022/04/CasasPlatinoPositivo.png" alt="Casas Platino" class="footer-logo">
+      <div class="footer-social">
+        <a href="#" title="Facebook"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+        <a href="#" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="white"/></svg></a>
+        <a href="#" title="YouTube"><svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#1e2a35"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Información</h4>
+      <ul>
+        <li><a href="#">Nosotros</a></li>
+        <li><a href="#">Desarrollos</a></li>
+        <li><a href="#">Financiamiento</a></li>
+        <li><a href="#">Testimoniales</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>&nbsp;</h4>
+      <ul>
+        <li><a href="#">Contacto</a></li>
+        <li><a href="tel:4427900034">Llámanos</a></li>
+        <li><a href="mailto:contacto@casasplatino.com">Escríbenos</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    Todos los Derechos Reservados. 2026 © Casas Platino &nbsp;|&nbsp; <a href="#">Aviso privacidad</a> &nbsp;|&nbsp; <a href="#">Prensa</a>
+  </div>
+</footer>
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'es_MX'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00DTH000005msjh',
+				'Mensajeria_Web',
+				'https://drive-fun-8625--deopt.sandbox.my.site.com/ESWMensajeriaWeb1755762987021',
+				{
+					scrt2URL: 'https://drive-fun-8625--deopt.sandbox.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://drive-fun-8625--deopt.sandbox.my.site.com/ESWMensajeriaWeb1755762987021/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+</body>
+</html>

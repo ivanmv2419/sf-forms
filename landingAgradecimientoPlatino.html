@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gracias | Casas Platino</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #00cfb4;
+    --teal-dark: #00b89e;
+    --navy: #1e2a35;
+    --navy-light: #253340;
+    --bg: #f4f4f4;
+    --white: #ffffff;
+    --text: #1a1a1a;
+    --text-muted: #888;
+    --border: #ddd;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text);
+  }
+
+  /* NAV */
+  nav {
+    background: var(--navy);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .nav-logo { height: 38px; }
+
+  /* HERO */
+  .hero-bar {
+    background: var(--navy-light);
+    text-align: center;
+    padding: 52px 20px 48px;
+  }
+
+  .hero-bar h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  /* MAIN */
+  .main-content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+
+  /* CARD */
+  .success-card {
+    background: var(--white);
+    border-radius: 4px;
+    padding: 52px 56px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+    text-align: center;
+  }
+
+  .success-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--teal);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+
+  .success-icon svg {
+    width: 34px;
+    height: 34px;
+    fill: white;
+  }
+
+  .success-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .success-sub {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 28px;
+  }
+
+  .info-box {
+    background: #f9f9f9;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 22px;
+    margin-bottom: 28px;
+  }
+
+  .info-box strong {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .highlight {
+    color: var(--teal);
+    font-weight: 600;
+  }
+
+  .btn {
+    display: inline-block;
+    background: var(--text);
+    color: white;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 14px 28px;
+    border-radius: 3px;
+    transition: 0.2s;
+  }
+
+  .btn:hover {
+    background: #2c2c2c;
+  }
+
+  .extra-text {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 700px) {
+    .success-card { padding: 36px 22px; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+  <img src="https://terrabmt.com/wp-content/uploads/2022/04/CasasPlatinoPositivo.png" class="nav-logo">
+</nav>
+
+<!-- HERO -->
+<div class="hero-bar">
+  <h1>Gracias por contactarnos</h1>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <div class="success-card">
+
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20.3 7.7l-1.4-1.4z"/>
+      </svg>
+    </div>
+
+    <div class="success-title">¡Hemos recibido tu solicitud!</div>
+    <div class="success-sub">
+      Muy pronto uno de nuestros asesores se pondrá en contacto contigo.
+    </div>
+
+    <div class="info-box">
+      <strong>¿Qué sigue?</strong>
+      Te contactaremos en las próximas  
+      <span class="highlight">24 a 48 horas hábiles</span>.
+    </div>
+
+    <a href="https://ivanmv2419.github.io/sf-forms/" class="btn">
+      VOLVER AL SITIO
+    </a>
+
+    <div class="extra-text">
+      Si tienes alguna duda, puedes contactarnos directamente.
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

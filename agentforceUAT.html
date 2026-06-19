@@ -325,22 +325,24 @@
 
     <!-- Chat Script de Agentforce -->
     <script type='text/javascript'>
-        function initEmbeddedMessaging() {
-            try {
-                embeddedservice_bootstrap.settings.language = 'es';
-                embeddedservice_bootstrap.init(
-                    '00DcX000004FAmL',
-                    'Agentforce_Chat_Web',
-                    'https://brothermexico--bsandboxpr.sandbox.my.site.com/ESWAgentforceChatWeb1768989689937',
-                    {
-                        scrt2URL: 'https://brothermexico--bsandboxpr.sandbox.my.salesforce-scrt.com'
-                    }
-                );
-            } catch (err) {
-                console.error('Error loading Embedded Messaging: ', err);
-            }
-        };
+	    function initEmbeddedMessaging() {
+		    try {
+			    embeddedservice_bootstrap.settings.language = 'es'; // For example, enter 'en' or 'en-US'
+
+			    embeddedservice_bootstrap.init(
+			    	'00Dcf00000C49U1',
+			    	'Agentforce_v2',
+			    	'https://brothermexico--aforcev2.sandbox.my.site.com/ESWAgentforcev21781763457999',
+			    	{
+			    		scrt2URL: 'https://brothermexico--aforcev2.sandbox.my.salesforce-scrt.com'
+			    	}
+		    	);
+	    	} catch (err) {
+		    	console.error('Error loading Embedded Messaging: ', err);
+		    }
+	    };
     </script>
-    <script type='text/javascript' src='https://brothermexico--bsandboxpr.sandbox.my.site.com/ESWAgentforceChatWeb1768989689937/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+    <script type='text/javascript' src='https://brothermexico--aforcev2.sandbox.my.site.com/ESWAgentforcev21781763457999/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
 </body>
 </html>

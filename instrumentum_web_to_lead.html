@@ -150,6 +150,19 @@
             cursor: pointer;
         }
 
+        .instrumentum-new-client .sms-consent {
+            margin: 8px 0 0 21px;
+            color: var(--instrumentum-muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .instrumentum-new-client .sms-consent a {
+            color: var(--instrumentum-navy);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
         .instrumentum-new-client .captcha-container {
             max-width: 100%;
             overflow-x: auto;
@@ -466,7 +479,9 @@
                 <input
                     id="00NQO00000C2mV1"
                     name="00NQO00000C2mV1"
-                    type="text"
+                    type="number"
+                    min="0"
+                    step="1"
                     inputmode="numeric"
                 >
             </div>
@@ -481,6 +496,11 @@
                     >
                     <label for="00NQO00000Hlhao">I agree</label>
                 </div>
+                <p class="sms-consent">
+                    By checking this box, I consent to receive SMS from Instrumentum LLC.
+                    Reply STOP to opt-out; Reply HELP for support; Message &amp; data rates may apply;
+                    Messaging frequency may vary. Visit our Privacy Policy and Terms of Service.
+                </p>
             </div>
 
             <div class="field full-width">
@@ -503,3 +523,4 @@
     </form>
 </body>
 </html>
+

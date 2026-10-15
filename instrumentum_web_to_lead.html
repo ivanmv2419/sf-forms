@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Client Contact | Instrumentum</title>
 
+    <!-- Google reCAPTCHA v2 Checkbox -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <style>
         /*
          * Instrumentum-inspired styling based on the supplied screenshot.
-         * Scope styles to this form to avoid affecting the host website.
+         * Styles are scoped to this form to avoid affecting the host website.
          */
         .instrumentum-new-client {
             --instrumentum-navy: #0b2348;
@@ -129,11 +130,6 @@
             box-shadow: 0 0 0 2px rgb(8 125 136 / 13%);
         }
 
-        .instrumentum-new-client input:required:invalid:not(:focus):not(:placeholder-shown),
-        .instrumentum-new-client textarea:required:invalid:not(:focus):not(:placeholder-shown) {
-            border-color: var(--instrumentum-error);
-        }
-
         .instrumentum-new-client .checkbox-row {
             display: flex;
             align-items: flex-start;
@@ -152,19 +148,6 @@
         .instrumentum-new-client .checkbox-row label {
             font-size: 11px;
             cursor: pointer;
-        }
-
-        .instrumentum-new-client .consent-copy {
-            margin: 2px 0 0;
-            color: var(--instrumentum-text);
-            font-size: 11px;
-            line-height: 1.55;
-        }
-
-        .instrumentum-new-client .consent-copy a {
-            color: var(--instrumentum-navy);
-            text-decoration: underline;
-            text-underline-offset: 2px;
         }
 
         .instrumentum-new-client .captcha-container {
@@ -193,7 +176,7 @@
             font-weight: 400;
             line-height: 1.2;
             cursor: pointer;
-            transition: background-color .15s ease, transform .15s ease;
+            transition: background-color .15s ease;
         }
 
         .instrumentum-new-client button[type="submit"]:hover {
@@ -222,9 +205,7 @@
             display: block;
         }
 
-        .instrumentum-new-client .field.has-error input,
-        .instrumentum-new-client .field.has-error select,
-        .instrumentum-new-client .field.has-error textarea {
+        .instrumentum-new-client .field.has-error input {
             border-color: var(--instrumentum-error);
         }
 
@@ -246,6 +227,11 @@
     </style>
 
     <script>
+        /*
+         * Salesforce Web-to-Lead timestamp helper.
+         * Keep the keyname synchronized with the reCAPTCHA key pair configured
+         * in Salesforce Setup > Web-to-Lead.
+         */
         function timestamp() {
             var response = document.getElementById("g-recaptcha-response");
             var settings = document.getElementsByName("captcha_settings")[0];
@@ -274,14 +260,10 @@
                 return;
             }
 
-            var requiredFields = [
-                { id: "last_name", message: "Please fill out this field." },
-                { id: "company", message: "Please fill out this field." },
-                { id: "email", message: "Please enter a valid email address." }
-            ];
+            var requiredFields = ["last_name", "company", "email"];
 
-            requiredFields.forEach(function (item) {
-                var input = document.getElementById(item.id);
+            requiredFields.forEach(function (id) {
+                var input = document.getElementById(id);
                 if (!input) {
                     return;
                 }
@@ -297,8 +279,8 @@
             form.addEventListener("submit", function (event) {
                 var firstInvalid = null;
 
-                requiredFields.forEach(function (item) {
-                    var input = document.getElementById(item.id);
+                requiredFields.forEach(function (id) {
+                    var input = document.getElementById(id);
                     if (!input) {
                         return;
                     }
@@ -332,7 +314,7 @@
         <input
             type="hidden"
             name="captcha_settings"
-            value='{"keyname":"instructionsUAT","fallback":"true","orgId":"00Dbb000008nsfN","ts":""}'
+            value='{"keyname":"InstrumentumUAT","fallback":"true","orgId":"00Dbb000008nsfN","ts":""}'
         >
         <input type="hidden" name="oid" value="00Dbb000008nsfN">
         <input
@@ -465,11 +447,7 @@
 
             <div class="field full-width">
                 <label for="description">What challenge are you looking to solve?</label>
-                <textarea
-                    id="description"
-                    name="description"
-                    rows="5"
-                ></textarea>
+                <textarea id="description" name="description" rows="5"></textarea>
             </div>
 
             <div class="field">
@@ -507,9 +485,10 @@
 
             <div class="field full-width">
                 <div class="captcha-container">
+                    <!-- This is the new reCAPTCHA v2 Checkbox site key -->
                     <div
                         class="g-recaptcha"
-                        data-sitekey="6LftBe4tAAAAALNxVnvpNPpG6BlNXW10YzOytos1"
+                        data-sitekey="6LfeLfEtAAAAAEOzuzHaSeSquJYEAy1Q3Sn2mYHe"
                     ></div>
                 </div>
             </div>

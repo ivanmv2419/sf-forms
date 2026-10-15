@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Client Contact | Instrumentum</title>
+
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <style>
+        /*
+         * Instrumentum-inspired styling based on the supplied screenshot.
+         * Scope styles to this form to avoid affecting the host website.
+         */
+        .instrumentum-new-client {
+            --instrumentum-navy: #0b2348;
+            --instrumentum-navy-hover: #15345f;
+            --instrumentum-teal: #087d88;
+            --instrumentum-sage: #c4d4d2;
+            --instrumentum-text: #10284a;
+            --instrumentum-muted: #48616b;
+            --instrumentum-border: #d7e0e0;
+            --instrumentum-error: #d95353;
+
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0;
+            color: var(--instrumentum-text);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            box-sizing: border-box;
+        }
+
+        .instrumentum-new-client *,
+        .instrumentum-new-client *::before,
+        .instrumentum-new-client *::after {
+            box-sizing: border-box;
+        }
+
+        .instrumentum-new-client .form-title {
+            margin: 0 0 28px;
+            color: var(--instrumentum-navy);
+            font-size: clamp(25px, 3vw, 32px);
+            font-weight: 700;
+            letter-spacing: -0.7px;
+            line-height: 1.2;
+        }
+
+        .instrumentum-new-client .form-intro {
+            margin: -12px 0 24px;
+            color: var(--instrumentum-muted);
+            font-size: 13px;
+        }
+
+        .instrumentum-new-client .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: 14px;
+            row-gap: 13px;
+            align-items: start;
+        }
+
+        .instrumentum-new-client .field {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            gap: 4px;
+        }
+
+        .instrumentum-new-client .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .instrumentum-new-client label {
+            display: block;
+            margin: 0;
+            color: var(--instrumentum-text);
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.45;
+        }
+
+        .instrumentum-new-client .required {
+            color: var(--instrumentum-error);
+        }
+
+        .instrumentum-new-client input:not([type="checkbox"]),
+        .instrumentum-new-client select,
+        .instrumentum-new-client textarea {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            min-height: 34px;
+            margin: 0;
+            padding: 7px 9px;
+            border: 1px solid var(--instrumentum-border);
+            border-radius: 3px;
+            background: #fff;
+            color: var(--instrumentum-text);
+            font-family: inherit;
+            font-size: 12px;
+            line-height: 1.4;
+            box-shadow: none;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+        .instrumentum-new-client select {
+            cursor: pointer;
+        }
+
+        .instrumentum-new-client textarea {
+            min-height: 82px;
+            resize: vertical;
+        }
+
+        .instrumentum-new-client input::placeholder,
+        .instrumentum-new-client textarea::placeholder {
+            color: #8b989d;
+            opacity: 1;
+        }
+
+        .instrumentum-new-client input:not([type="checkbox"]):focus,
+        .instrumentum-new-client select:focus,
+        .instrumentum-new-client textarea:focus {
+            outline: none;
+            border-color: var(--instrumentum-teal);
+            box-shadow: 0 0 0 2px rgb(8 125 136 / 13%);
+        }
+
+        .instrumentum-new-client input:required:invalid:not(:focus):not(:placeholder-shown),
+        .instrumentum-new-client textarea:required:invalid:not(:focus):not(:placeholder-shown) {
+            border-color: var(--instrumentum-error);
+        }
+
+        .instrumentum-new-client .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+        }
+
+        .instrumentum-new-client .checkbox-row input[type="checkbox"] {
+            flex: 0 0 auto;
+            width: 14px;
+            height: 14px;
+            margin: 2px 0 0;
+            accent-color: var(--instrumentum-navy);
+            cursor: pointer;
+        }
+
+        .instrumentum-new-client .checkbox-row label {
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .instrumentum-new-client .consent-copy {
+            margin: 2px 0 0;
+            color: var(--instrumentum-text);
+            font-size: 11px;
+            line-height: 1.55;
+        }
+
+        .instrumentum-new-client .consent-copy a {
+            color: var(--instrumentum-navy);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .instrumentum-new-client .captcha-container {
+            max-width: 100%;
+            overflow-x: auto;
+            padding-top: 2px;
+        }
+
+        .instrumentum-new-client .form-actions {
+            margin-top: 20px;
+        }
+
+        .instrumentum-new-client button[type="submit"] {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 70px;
+            min-height: 30px;
+            padding: 8px 24px;
+            border: 0;
+            border-radius: 999px;
+            background: var(--instrumentum-navy);
+            color: #fff;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.2;
+            cursor: pointer;
+            transition: background-color .15s ease, transform .15s ease;
+        }
+
+        .instrumentum-new-client button[type="submit"]:hover {
+            background: var(--instrumentum-navy-hover);
+        }
+
+        .instrumentum-new-client button[type="submit"]:focus-visible {
+            outline: 3px solid rgb(11 35 72 / 25%);
+            outline-offset: 3px;
+        }
+
+        .instrumentum-new-client .form-note {
+            margin: 10px 0 0;
+            color: var(--instrumentum-muted);
+            font-size: 10px;
+        }
+
+        .instrumentum-new-client .field-error {
+            display: none;
+            color: var(--instrumentum-error);
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .instrumentum-new-client .field.has-error .field-error {
+            display: block;
+        }
+
+        .instrumentum-new-client .field.has-error input,
+        .instrumentum-new-client .field.has-error select,
+        .instrumentum-new-client .field.has-error textarea {
+            border-color: var(--instrumentum-error);
+        }
+
+        @media (max-width: 560px) {
+            .instrumentum-new-client .form-grid {
+                grid-template-columns: minmax(0, 1fr);
+                row-gap: 14px;
+            }
+
+            .instrumentum-new-client .full-width {
+                grid-column: auto;
+            }
+
+            .instrumentum-new-client button[type="submit"] {
+                min-width: 100px;
+                min-height: 36px;
+            }
+        }
+    </style>
+
+    <script>
+        function timestamp() {
+            var response = document.getElementById("g-recaptcha-response");
+            var settings = document.getElementsByName("captcha_settings")[0];
+
+            if (!settings) {
+                return;
+            }
+
+            if (response === null || response.value.trim() === "") {
+                try {
+                    var elements = JSON.parse(settings.value);
+                    elements.ts = String(new Date().getTime());
+                    settings.value = JSON.stringify(elements);
+                } catch (error) {
+                    console.error("Unable to update reCAPTCHA settings.", error);
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            timestamp();
+            window.setInterval(timestamp, 500);
+
+            var form = document.querySelector(".instrumentum-new-client");
+            if (!form) {
+                return;
+            }
+
+            var requiredFields = [
+                { id: "last_name", message: "Please fill out this field." },
+                { id: "company", message: "Please fill out this field." },
+                { id: "email", message: "Please enter a valid email address." }
+            ];
+
+            requiredFields.forEach(function (item) {
+                var input = document.getElementById(item.id);
+                if (!input) {
+                    return;
+                }
+
+                input.addEventListener("input", function () {
+                    var field = input.closest(".field");
+                    if (field && input.checkValidity()) {
+                        field.classList.remove("has-error");
+                    }
+                });
+            });
+
+            form.addEventListener("submit", function (event) {
+                var firstInvalid = null;
+
+                requiredFields.forEach(function (item) {
+                    var input = document.getElementById(item.id);
+                    if (!input) {
+                        return;
+                    }
+
+                    var field = input.closest(".field");
+                    if (field) {
+                        field.classList.toggle("has-error", !input.checkValidity());
+                    }
+
+                    if (!input.checkValidity() && !firstInvalid) {
+                        firstInvalid = input;
+                    }
+                });
+
+                if (firstInvalid) {
+                    event.preventDefault();
+                    firstInvalid.focus();
+                    firstInvalid.reportValidity();
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <form
+        class="instrumentum-new-client"
+        action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&amp;orgId=00Dbb000008nsfN"
+        method="POST"
+    >
+        <input
+            type="hidden"
+            name="captcha_settings"
+            value='{"keyname":"instructionsUAT","fallback":"true","orgId":"00Dbb000008nsfN","ts":""}'
+        >
+        <input type="hidden" name="oid" value="00Dbb000008nsfN">
+        <input
+            type="hidden"
+            name="retURL"
+            value="https://instrumentum.com/contact-us/#new-client-contact"
+        >
+        <input type="hidden" id="lead_source" name="lead_source" value="Web">
+
+        <h2 class="form-title">New Client Contact</h2>
+        <p class="form-intro">
+            Please complete the form below and we will be in touch.
+            Fields marked with <span class="required">*</span> are required.
+        </p>
+
+        <div class="form-grid">
+            <div class="field">
+                <label for="first_name">First Name</label>
+                <input
+                    id="first_name"
+                    maxlength="40"
+                    name="first_name"
+                    type="text"
+                    autocomplete="given-name"
+                >
+            </div>
+
+            <div class="field">
+                <label for="last_name">Last Name <span class="required">(*)</span></label>
+                <input
+                    id="last_name"
+                    maxlength="80"
+                    name="last_name"
+                    type="text"
+                    autocomplete="family-name"
+                    required
+                    aria-describedby="last_name_error"
+                >
+                <span class="field-error" id="last_name_error">Please fill out this field.</span>
+            </div>
+
+            <div class="field">
+                <label for="company">Organization/Facility <span class="required">(*)</span></label>
+                <input
+                    id="company"
+                    maxlength="40"
+                    name="company"
+                    type="text"
+                    autocomplete="organization"
+                    required
+                    aria-describedby="company_error"
+                >
+                <span class="field-error" id="company_error">Please fill out this field.</span>
+            </div>
+
+            <div class="field">
+                <label for="00NQO00000BvFHZ">Customer Type</label>
+                <select
+                    id="00NQO00000BvFHZ"
+                    name="00NQO00000BvFHZ"
+                    title="Customer Type"
+                >
+                    <option value="">--None--</option>
+                    <option value="Clinic">Clinic</option>
+                    <option value="Hospital">Hospital</option>
+                    <option value="IDN">IDN</option>
+                    <option value="ASC">ASC</option>
+                    <option value="Vendor">OEM</option>
+                    <option value="Distributor">Distributor</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="city">City</label>
+                <input
+                    id="city"
+                    maxlength="40"
+                    name="city"
+                    type="text"
+                    autocomplete="address-level2"
+                >
+            </div>
+
+            <div class="field">
+                <label for="state">State/Province</label>
+                <input
+                    id="state"
+                    maxlength="20"
+                    name="state"
+                    type="text"
+                    autocomplete="address-level1"
+                >
+            </div>
+
+            <div class="field">
+                <label for="zip">Zip Code</label>
+                <input
+                    id="zip"
+                    maxlength="20"
+                    name="zip"
+                    type="text"
+                    autocomplete="postal-code"
+                >
+            </div>
+
+            <div class="field">
+                <label for="phone">Phone</label>
+                <input
+                    id="phone"
+                    maxlength="40"
+                    name="phone"
+                    type="tel"
+                    autocomplete="tel"
+                >
+            </div>
+
+            <div class="field">
+                <label for="email">Email <span class="required">(*)</span></label>
+                <input
+                    id="email"
+                    maxlength="80"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                    aria-describedby="email_error"
+                >
+                <span class="field-error" id="email_error">Please enter a valid email address.</span>
+            </div>
+
+            <div class="field full-width">
+                <label for="description">What challenge are you looking to solve?</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                ></textarea>
+            </div>
+
+            <div class="field">
+                <label for="00NQO00000C2mV0">Number of ORs</label>
+                <input
+                    id="00NQO00000C2mV0"
+                    maxlength="255"
+                    name="00NQO00000C2mV0"
+                    type="text"
+                    inputmode="numeric"
+                >
+            </div>
+
+            <div class="field">
+                <label for="00NQO00000C2mV1">Procedures per Month</label>
+                <input
+                    id="00NQO00000C2mV1"
+                    name="00NQO00000C2mV1"
+                    type="text"
+                    inputmode="numeric"
+                >
+            </div>
+
+            <div class="field full-width">
+                <div class="checkbox-row">
+                    <input
+                        id="00NQO00000Hlhao"
+                        name="00NQO00000Hlhao"
+                        type="checkbox"
+                        value="1"
+                    >
+                    <label for="00NQO00000Hlhao">I agree</label>
+                </div>
+            </div>
+
+            <div class="field full-width">
+                <div class="captcha-container">
+                    <div
+                        class="g-recaptcha"
+                        data-sitekey="6LftBe4tAAAAALNxVnvpNPpG6BlNXW10YzOytos1"
+                    ></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" name="submit">Submit</button>
+            <p class="form-note">
+                <span class="required">*</span> Required fields.
+            </p>
+        </div>
+    </form>
+</body>
+</html>

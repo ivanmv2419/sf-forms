@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#063778">
+  <meta name="description" content="UniAssist, el asistente virtual de Uni-Trade. Consulta servicios logísticos, certificaciones y solicita una cotización.">
+  <title>UniAssist | Grupo Uni-Trade</title>
+  <style>
+    :root {
+      --navy: #063778;
+      --navy-deep: #052e64;
+      --blue: #0752a0;
+      --orange: #f49a24;
+      --gold: #f8ad36;
+      --ink: #173b69;
+      --muted: #68778a;
+      --paper: #fff;
+      --soft: #f4f5f6;
+      --line: #e2e6eb;
+      --radius: 13px;
+      --shadow: 0 12px 32px rgba(5, 46, 100, .09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: #34465d;
+      background: var(--paper);
+      font-family: "Arial", "Helvetica Neue", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid var(--orange);
+      outline-offset: 4px;
+    }
+    .container { width: min(1120px, calc(100% - 44px)); margin: 0 auto; }
+
+    .topbar {
+      height: 5px;
+      background: linear-gradient(90deg, var(--orange), var(--gold) 48%, var(--navy) 48%);
+    }
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e8ebef;
+    }
+    .header-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--navy);
+      text-decoration: none;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      line-height: 1.05;
+    }
+    .brand-symbol {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      color: white;
+      background: var(--navy);
+      border-radius: 50% 50% 8px 8px;
+      font-size: 14px;
+      letter-spacing: -.5px;
+      box-shadow: inset 0 -4px 0 rgba(0,0,0,.1);
+    }
+    .brand-symbol::before {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      width: 22px;
+      height: 4px;
+      background: var(--orange);
+      transform: rotate(-24deg);
+      border-radius: 5px;
+    }
+    .brand small {
+      display: block;
+      margin-top: 4px;
+      color: #788391;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+    }
+    .nav a { text-decoration: none; }
+    .nav a:first-child { color: var(--orange); }
+    .nav a:hover { color: var(--orange); }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 78px 0 82px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 83% 25%, rgba(255,255,255,.12), transparent 24%),
+        linear-gradient(120deg, #052e64 0%, #063778 56%, #0a4d8e 100%);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .13;
+      background-image: radial-gradient(#fff 1px, transparent 1.4px);
+      background-size: 13px 13px;
+      mask-image: linear-gradient(90deg, transparent, #000 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -115px;
+      bottom: -225px;
+      width: 420px;
+      height: 420px;
+      border: 46px solid rgba(255,255,255,.08);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 760px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 18px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 3px;
+      background: var(--orange);
+    }
+    h1, h2, h3, p { overflow-wrap: anywhere; }
+    .hero h1 {
+      margin: 0 0 20px;
+      max-width: 700px;
+      color: white;
+      font-size: clamp(39px, 5.8vw, 63px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      font-weight: 900;
+    }
+    .hero h1 span { color: var(--orange); }
+    .hero p {
+      max-width: 615px;
+      margin: 0;
+      color: #e3ebf5;
+      font-size: 17px;
+      line-height: 1.85;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 17px; margin-top: 30px; }
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 47px;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 6px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .16s ease, background .16s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-orange { background: var(--orange); color: var(--navy-deep); }
+    .btn-orange:hover { background: #ffc05e; }
+    .hero-note { color: #d4e0ed; font-size: 12px; }
+
+    .section {
+      position: relative;
+      padding: 72px 0 78px;
+      overflow: hidden;
+    }
+    .section-pattern {
+      background-color: #f7f8f9;
+      background-image: radial-gradient(#e4e7ea 1.1px, transparent 1.4px);
+      background-size: 12px 12px;
+    }
+    .section-pattern::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.82), rgba(255,255,255,.3));
+      pointer-events: none;
+    }
+    .section .container { position: relative; z-index: 1; }
+    .section-heading { max-width: 700px; margin: 0 auto 38px; text-align: center; }
+    .section-kicker {
+      color: var(--orange);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .section-heading h2 {
+      display: inline-block;
+      margin: 7px 0 13px;
+      padding-bottom: 12px;
+      position: relative;
+      color: var(--navy);
+      font-size: clamp(30px, 4vw, 41px);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -.8px;
+    }
+    .section-heading h2::after {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      bottom: 0;
+      height: 6px;
+      background: var(--orange);
+    }
+    .section-heading p { margin: 0; color: #68778a; font-size: 15px; }
+
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 19px; }
+    .card {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 25px 24px 22px;
+      background: rgba(255,255,255,.96);
+      border: 1px solid #e7e9ed;
+      border-radius: 10px;
+      box-shadow: 0 7px 22px rgba(5,46,100,.055);
+      border-top: 3px solid var(--orange);
+    }
+    .icon {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 17px;
+      color: white;
+      background: var(--navy);
+      border-radius: 50%;
+      box-shadow: 4px 4px 0 rgba(244,154,36,.23);
+    }
+    .icon svg {
+      width: 23px; height: 23px; fill: none; stroke: currentColor;
+      stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .card h3 { margin: 0 0 9px; color: var(--navy); font-size: 18px; line-height: 1.3; font-weight: 900; }
+    .card p { margin: 0 0 17px; color: #68778a; font-size: 13px; line-height: 1.7; }
+    .examples { margin: auto 0 0; padding: 13px 0 0; list-style: none; border-top: 1px solid var(--line); }
+    .examples li { position: relative; margin: 9px 0; padding-left: 15px; color: #3b4d62; font-size: 12px; line-height: 1.55; }
+    .examples li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+
+    .cta { padding: 0 0 74px; background: #f7f8f9; }
+    .cta-panel {
+      display: flex; align-items: center; justify-content: space-between; gap: 28px;
+      padding: 33px 38px;
+      background: #fff;
+      border: 1px solid #e5e8ec;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-panel::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 6px; background: var(--orange); }
+    .cta-panel h2 { margin: 0 0 7px; color: var(--navy); font-size: 25px; font-weight: 900; line-height: 1.25; }
+    .cta-panel p { margin: 0; color: var(--muted); font-size: 13px; }
+    .btn-blue { flex-shrink: 0; background: var(--navy); color: #fff; }
+    .btn-blue:hover { background: var(--blue); }
+
+    footer { padding: 25px 0; color: #e5edf7; background: var(--navy); border-bottom: 5px solid var(--orange); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; font-size: 11px; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+    footer a { color: #fff; text-decoration: none; }
+    footer a:hover { color: var(--orange); }
+
+    @media (max-width: 850px) {
+      .nav { gap: 14px; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero { padding: 64px 0 68px; }
+      .cta-panel { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 570px) {
+      .container { width: min(100% - 32px, 1120px); }
+      .header-inner { min-height: 66px; }
+      .nav { gap: 12px; font-size: 10px; }
+      .nav a:nth-child(2), .nav a:nth-child(3) { display: none; }
+      .brand { font-size: 16px; }
+      .brand-symbol { width: 36px; height: 36px; }
+      .hero { padding: 54px 0 58px; }
+      .hero h1 { font-size: clamp(37px, 11vw, 49px); letter-spacing: -1.3px; }
+      .hero p { font-size: 15px; }
+      .hero-actions { align-items: flex-start; flex-direction: column; }
+      .section { padding: 55px 0 60px; }
+      .cards { grid-template-columns: 1fr; gap: 14px; }
+      .card { padding: 22px; }
+      .cta { padding-bottom: 55px; }
+      .cta-panel { padding: 27px 24px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar" aria-hidden="true"></div>
+  <header>
+    <div class="container header-inner">
+      <a class="brand" href="https://www.uni-trade.com/" aria-label="Grupo Uni-Trade, sitio oficial">
+        <span class="brand-symbol" aria-hidden="true">UT</span>
+        <span>GRUPO<small>UNI-TRADE</small></span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal">
+        <a href="#inicio">Inicio</a>
+        <a href="https://www.uni-trade.com/" target="_blank" rel="noopener noreferrer">Nosotros</a>
+        <a href="#casos">Servicios</a>
+        <a href="https://www.uni-trade.com/Privacy" target="_blank" rel="noopener noreferrer">Privacidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-inner">
+        <div class="eyebrow">Asistente virtual Uni-Trade</div>
+        <h1>Tu operación logística empieza con <span>UniAssist</span></h1>
+        <p>
+          Resuelve tus dudas, conoce nuestros servicios de comercio exterior
+          y logística, o inicia una solicitud de cotización. Estamos aquí
+          para orientarte.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-orange" type="button" onclick="openUniAssist()">
+            Conversar con UniAssist <span aria-hidden="true">&nbsp;→</span>
+          </button>
+          <span class="hero-note">Cuéntanos qué necesitas transportar.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-pattern" id="casos">
+      <div class="container">
+        <div class="section-heading">
+          <div class="section-kicker">¿Cómo podemos ayudarte?</div>
+          <h2>Pregúntale a UniAssist</h2>
+          <p>Elige una idea para empezar o escribe tu pregunta directamente en el chat.</p>
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M3 7h18v13H3z"/><path d="M3 11h18M8 7V4h8v3"/></svg>
+            </div>
+            <h3>Servicios logísticos</h3>
+            <p>Conoce alternativas para transportar, almacenar y distribuir mercancía.</p>
+            <ul class="examples">
+              <li>¿Qué servicios de transporte ofrecen?</li>
+              <li>¿Cuentan con almacenaje y distribución?</li>
+              <li>¿Cómo funciona el despacho aduanal?</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 5 3.5 7.5 8 9 4.5-1.5 8-4 8-9V7z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg>
+            </div>
+            <h3>Certificaciones</h3>
+            <p>Infórmate sobre certificaciones y asociaciones relacionadas con nuestras operaciones.</p>
+            <ul class="examples">
+              <li>¿Con qué certificaciones cuentan?</li>
+              <li>¿Tienen OEA o C-TPAT?</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+            </div>
+            <h3>Solicitar una cotización</h3>
+            <p>Comparte los datos de tu envío para registrar tu interés y dar seguimiento comercial.</p>
+            <ul class="examples">
+              <li>Quiero cotizar un envío de México a Estados Unidos.</li>
+              <li>Necesito transportar carga por vía marítima.</li>
+              <li>Quiero enviar 500 kg de mercancía.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4z"/><path d="M8 8h8M8 12h5"/></svg>
+            </div>
+            <h3>Quejas y sugerencias</h3>
+            <p>Recibe orientación para comunicar una situación, inconformidad o propuesta.</p>
+            <ul class="examples">
+              <li>Quiero presentar una queja.</li>
+              <li>¿Cómo puedo enviar una sugerencia?</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7h.01"/></svg>
+            </div>
+            <h3>Privacidad y políticas</h3>
+            <p>Encuentra la información oficial sobre privacidad y condiciones de uso.</p>
+            <ul class="examples">
+              <li>¿Dónde consulto el aviso de privacidad?</li>
+              <li>¿Dónde encuentro sus términos y condiciones?</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 5h16v12H9l-5 3z"/><path d="M8 9h8M8 13h5"/></svg>
+            </div>
+            <h3>Atención personalizada</h3>
+            <p>Solicita que tu conversación sea transferida a un ejecutivo cuando necesites apoyo especializado.</p>
+            <ul class="examples">
+              <li>Quiero hablar con un asesor.</li>
+              <li>Necesito atención personalizada.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <div class="cta-panel">
+          <div>
+            <h2>¿Tienes un proyecto en mente?</h2>
+            <p>Habla con UniAssist y cuéntanos cómo podemos ayudarte.</p>
+          </div>
+          <button class="btn btn-blue" type="button" onclick="openUniAssist()">
+            Iniciar conversación <span aria-hidden="true">&nbsp;→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© <span id="current-year">2026</span> Grupo Uni-Trade. Todos los derechos reservados.</span>
+      <div class="footer-links">
+        <a href="https://www.uni-trade.com/Privacy" target="_blank" rel="noopener noreferrer">Aviso de privacidad</a>
+        <a href="https://www.uni-trade.com/" target="_blank" rel="noopener noreferrer">Sitio oficial</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function openUniAssist() {
+      const launcher = document.querySelector(
+        'button.embeddedMessagingConversationButton'
+      );
+
+      if (launcher) {
+        launcher.click();
+        return;
+      }
+
+      console.info(
+        'UniAssist aún se está inicializando o el lanzador no está disponible.'
+      );
+    }
+
+    document.getElementById('current-year').textContent =
+      String(new Date().getFullYear());
+  </script>
+
+  <!-- Salesforce Embedded Messaging: configuración original -->
+  <script type="text/javascript">
+    function initEmbeddedMessaging() {
+      try {
+        embeddedservice_bootstrap.settings.language = 'en_US';
+
+        embeddedservice_bootstrap.init(
+          '00Dg500000EB9r7',
+          'Agentforce_UniAssist',
+          'https://orgfarm-6a5ec845e2-dev-ed.develop.my.site.com/ESWAgentforceUni1792473102179',
+          {
+            scrt2URL: 'https://orgfarm-6a5ec845e2-dev-ed.develop.my.salesforce-scrt.com'
+          }
+        );
+      } catch (err) {
+        console.error('Error loading Embedded Messaging: ', err);
+      }
+    }
+  </script>
+  <script
+    type="text/javascript"
+    src="https://orgfarm-6a5ec845e2-dev-ed.develop.my.site.com/ESWAgentforceUni1792473102179/assets/js/bootstrap.min.js"
+    onload="initEmbeddedMessaging()">
+  </script>
+</body>
+</html>

@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Client Contact | Instrumentum</title>
 
-    <!-- Google reCAPTCHA v2 Checkbox -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
     <style>
         /*
          * Instrumentum-inspired styling based on the supplied screenshot.
@@ -239,83 +236,10 @@
         }
     </style>
 
-    <script>
-        /*
-         * Salesforce Web-to-Lead timestamp helper.
-         * Keep the keyname synchronized with the reCAPTCHA key pair configured
-         * in Salesforce Setup > Web-to-Lead.
-         */
-        function timestamp() {
-            var response = document.getElementById("g-recaptcha-response");
-            var settings = document.getElementsByName("captcha_settings")[0];
 
-            if (!settings) {
-                return;
-            }
 
-            if (response === null || response.value.trim() === "") {
-                try {
-                    var elements = JSON.parse(settings.value);
-                    elements.ts = String(new Date().getTime());
-                    settings.value = JSON.stringify(elements);
-                } catch (error) {
-                    console.error("Unable to update reCAPTCHA settings.", error);
-                }
-            }
-        }
+    
 
-        document.addEventListener("DOMContentLoaded", function () {
-            timestamp();
-            window.setInterval(timestamp, 500);
-
-            var form = document.querySelector(".instrumentum-new-client");
-            if (!form) {
-                return;
-            }
-
-            var requiredFields = ["last_name", "company", "email"];
-
-            requiredFields.forEach(function (id) {
-                var input = document.getElementById(id);
-                if (!input) {
-                    return;
-                }
-
-                input.addEventListener("input", function () {
-                    var field = input.closest(".field");
-                    if (field && input.checkValidity()) {
-                        field.classList.remove("has-error");
-                    }
-                });
-            });
-
-            form.addEventListener("submit", function (event) {
-                var firstInvalid = null;
-
-                requiredFields.forEach(function (id) {
-                    var input = document.getElementById(id);
-                    if (!input) {
-                        return;
-                    }
-
-                    var field = input.closest(".field");
-                    if (field) {
-                        field.classList.toggle("has-error", !input.checkValidity());
-                    }
-
-                    if (!input.checkValidity() && !firstInvalid) {
-                        firstInvalid = input;
-                    }
-                });
-
-                if (firstInvalid) {
-                    event.preventDefault();
-                    firstInvalid.focus();
-                    firstInvalid.reportValidity();
-                }
-            });
-        });
-    </script>
 </head>
 
 <body>
@@ -324,11 +248,6 @@
         action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&amp;orgId=00Dbc00000B3RQM"
         method="POST"
     >
-        <input
-            type="hidden"
-            name="captcha_settings"
-            value='{"keyname":"InstrumentumUAT","fallback":"true","orgId":"00Dbc00000B3RQM","ts":""}'
-        >
         <input type="hidden" name="oid" value="00Dbc00000B3RQM">
         <input
             type="hidden"
@@ -501,16 +420,6 @@
                     Reply STOP to opt-out; Reply HELP for support; Message &amp; data rates may apply;
                     Messaging frequency may vary. Visit our Privacy Policy and Terms of Service.
                 </p>
-            </div>
-
-            <div class="field full-width">
-                <div class="captcha-container">
-                    <!-- This is the new reCAPTCHA v2 Checkbox site key -->
-                    <div
-                        class="g-recaptcha"
-                        data-sitekey="6LfeLfEtAAAAAEOzuzHaSeSquJYEAy1Q3Sn2mYHe"
-                    ></div>
-                </div>
             </div>
         </div>
 
